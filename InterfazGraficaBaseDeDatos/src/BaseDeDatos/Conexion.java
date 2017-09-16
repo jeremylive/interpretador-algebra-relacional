@@ -134,7 +134,6 @@ public class Conexion
             //1-)Primera validación: la tabla debe existir
             JOptionPane.showMessageDialog(null, "ERROR: NO EXISTE LA TABLA "+e.getMessage(),"warnning",JOptionPane.ERROR_MESSAGE);
         }
-        
         return null;
     }
 

@@ -27,7 +27,7 @@ public class Register extends javax.swing.JFrame
     /**
      * Variables globales
      */
-    private ResultSet output;   //Guarda el resultado del query
+    private ResultSet output;           //Guarda el resultado del query
     private int isCheck;               //Contador para
     private String id;
     private boolean bolean;
@@ -233,6 +233,7 @@ public class Register extends javax.swing.JFrame
                     break;
                     
                 case "Unión":
+                    
                     break;
                     
                 case "Diferencia de conjuntos":
