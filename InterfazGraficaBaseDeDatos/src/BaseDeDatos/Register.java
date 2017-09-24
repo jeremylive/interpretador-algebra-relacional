@@ -65,9 +65,10 @@ public class Register extends javax.swing.JFrame
             String sqlQuery = "CREATE TABLE proy1.#"+name_tablaOutput+" ";
             String sqlQuery2 = "(";
             String sqlQuery3 = "";
+            
             //Inserto datos en la tabla a mostrar
             while(output.next()){
-                for(int i=1;i<=index;i++){
+                for(int i=1; i<=index; i++){
                     //Obtengo info de la tabla 
                     if(i == index){
                         sqlQuery3 += metaDatos.getColumnName(i);
@@ -96,13 +97,15 @@ public class Register extends javax.swing.JFrame
             
             String insertF = "SELECT * FROM proy1.#"+name_tablaOutput;
    
-            System.out.println(insertT + "\n" + insertF);
+            System.out.println("\n" + insertT + "\n" + insertF);
+            
             //Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
             output = conexx.consultaSqlCreate(sqlQuery, insertT, insertF); 
                    
             //Imprimo la tabla temporal
             metaDatos = output.getMetaData();
             index = metaDatos.getColumnCount();      
+            
             while(output.next()){
                 Vector v = new Vector();
                 
@@ -210,26 +213,38 @@ public class Register extends javax.swing.JFrame
        //Verifica si la informacion esta digitada
        if(tabla_input1.getText().isEmpty() || predicado.getText().isEmpty())
        {
-           JOptionPane.showMessageDialog(this, "Insert your date correctly","Information",JOptionPane.INFORMATION_MESSAGE);
+           JOptionPane.showMessageDialog(this, "¡¡¡Inserte la TABLA INPUT 1 y el PREDICADO correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
            cleanText();
        } else {
-            switch(operator_aux){
+            switch(operator_aux){           
+                      
                 case "Selección":
+                    //Caso cuando no colocá el nombre de la TABLA OUTPUT
                     if(tabla_result.getText().isEmpty()){
                         algebra_relacional.setText("σ "+predicado.getText()+"("+tabla_input1.getText()+")");
                         sql.setText("SELECT * FROM "+tabla_input1.getText()+" WHERE "+predicado.getText());
                         JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
+                    //Caso en que si digita toda la informacion
                     }else{
                         algebra_relacional.setText(tabla_result.getText()+" <- σ "+predicado.getText()+"("+tabla_input1.getText()+")");
                         sql.setText("SELECT * FROM "+tabla_input1.getText()+" WHERE "+predicado.getText());
                         cargarTablaSeleccion(tabla_input1.getText(), predicado.getText(), tabla_result.getText());
                     }
-                    
                     break;
                 
                 case "Proyección Generalizada":
-                    algebra_relacional.setText(tabla_result.getText()+" <- π "+predicado.getText()+"("+tabla_input1.getText()+")");
-                    sql.setText("SELECT * FROM "+tabla_input1.getText()+" WHERE "+predicado.getText());
+                    //Caso cuando no colocá el nombre de la TABLA OUTPUT
+                    if(tabla_result.getText().isEmpty()){
+                        algebra_relacional.setText(tabla_result.getText()+" <- π "+predicado.getText()+"("+tabla_input1.getText()+")");
+                        sql.setText("SELECT * FROM "+tabla_input1.getText()+" WHERE "+predicado.getText());
+                        JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
+                    //Caso en que si digita toda la informacion
+                    }else{
+                        algebra_relacional.setText(tabla_result.getText()+" <- π "+predicado.getText()+"("+tabla_input1.getText()+")");
+                        sql.setText("SELECT * FROM "+tabla_input1.getText()+" WHERE "+predicado.getText());
+                        cargarTablaSeleccion(tabla_input1.getText(), predicado.getText(), tabla_result.getText());
+                             
+                    }
                     break;
                     
                 case "Unión":
@@ -666,14 +681,19 @@ public class Register extends javax.swing.JFrame
     }//GEN-LAST:event_jMenuItem1ActionPerformed
     /**
      * Boton insertar datos en la tabla 
+     *
+     * No importa el dominio de la tabla, se adactara la tabla automaticamente
+     *
+     * Respuesta TABLA OUTPUT ........
+     * 
      * @param evt 
      */
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-       //
+       
        //Verifica si la informacion esta digitada
        if(tabla_input1.getText().isEmpty() || predicado.getText().isEmpty() || tabla_input1.getText().isEmpty())
        {
-           JOptionPane.showMessageDialog(this, "Insert your date correctly","Information",JOptionPane.INFORMATION_MESSAGE);
+           JOptionPane.showMessageDialog(this, "¡¡¡Inserte la TABLA INPUT 1 y el PREDICADO correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
            cleanText();
        } else {
            try {
@@ -686,14 +706,17 @@ public class Register extends javax.swing.JFrame
                } catch (SQLException e) {
                    //nothing
                }
+               
+               //LOGICA A USAR PARA LA IMPRESION EN LA TABLA
+               
                //Inserta el usuario si no existe
                if(isCheck >=1)
                {
-                   JOptionPane.showMessageDialog(this, "This user is already exists","Information",JOptionPane.INFORMATION_MESSAGE);
+                   JOptionPane.showMessageDialog(this, "¡¡¡El usuario digitado ya existe!!!","Information",JOptionPane.INFORMATION_MESSAGE);
                } else {
                    conexx.insertaUser(tabla_input1.getText(), predicado.getText(), tabla_result.getText());
                    cleanText();
-                   JOptionPane.showMessageDialog(this, "The date was successfully correctly");
+                   JOptionPane.showMessageDialog(this, "¡¡¡Los datos fueron satisfactoriamente correctos!!!");
                    //cargarTabla();
                }
            } catch (SQLException e) {
@@ -714,11 +737,10 @@ public class Register extends javax.swing.JFrame
      * @param evt 
      */
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-        //
+
         int row = -1;
         row = jTable1.getSelectedRow();
 
-        
         if(row != -1){
             int opc = JOptionPane.showConfirmDialog(this, "¿Do you want to eliminate this register","Question",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
             if(opc == JOptionPane.YES_OPTION)
@@ -814,6 +836,10 @@ public class Register extends javax.swing.JFrame
         
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
+    /**
+     * 
+     * @param evt 
+     */
     private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
         // TODO add your handling code here:
         String operator = jComboBox1.getSelectedItem().toString();
@@ -822,6 +848,10 @@ public class Register extends javax.swing.JFrame
         modeloRelacional(operator);
     }//GEN-LAST:event_jToggleButton2ActionPerformed
 
+    /**
+     * 
+     * @param evt 
+     */
     private void acerca_deActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acerca_deActionPerformed
         
         JOptionPane.showMessageDialog(null, "Nombre de la aplicación: Interprete de Algebra Relacional\nVensión: 01.01.01\nFecha de creación: 13/09/17\nAutores: Jeremy José Live González","Acerca de..",JOptionPane.INFORMATION_MESSAGE);
@@ -836,6 +866,10 @@ public class Register extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField2ActionPerformed
 
+    /**
+     * Imprime todas las tablas temporales que eh creado desde que inicie la APP
+     * @param evt 
+     */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
                 
@@ -843,7 +877,10 @@ public class Register extends javax.swing.JFrame
                  
 
     }//GEN-LAST:event_jButton1ActionPerformed
-
+    /**
+     * Imprime todas las tablas permanentes de la Base de datos 
+     * @param evt 
+     */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         //case "Ver tablas de la base de datos":
@@ -852,13 +889,16 @@ public class Register extends javax.swing.JFrame
         printTablaPermanentes();
         
     }//GEN-LAST:event_jButton2ActionPerformed
-
-
-    
-    
-    
-    
-    
+   
+    /**
+     * -------------------------------------------------------------------------
+     * -------------------------------------------------------------------------
+     * -------------------------------------------------------------------------
+     * ..........................CODIGO_BASUTA..................................
+     * -------------------------------------------------------------------------
+     * -------------------------------------------------------------------------
+     * -------------------------------------------------------------------------
+     */
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton acerca_de;
     private javax.swing.JTextField algebra_relacional;
