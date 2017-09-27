@@ -138,7 +138,7 @@ public class Register extends javax.swing.JFrame
                 
                 output = conexx.consultaSql("SELECT * FROM proy1.#"+name_all_temp[i]);
                 
-                ResultSetMetaData metaDatos = output.getMetaData();
+                    ResultSetMetaData metaDatos = output.getMetaData();
                 int index=metaDatos.getColumnCount();
                 
                 System.out.println(name_all_temp[i]);
@@ -264,6 +264,7 @@ public class Register extends javax.swing.JFrame
                     break;
                  
                 case "Renombrar una relación y sus atributos":
+                    
                     break;
                     
                 case "Concatenación":
