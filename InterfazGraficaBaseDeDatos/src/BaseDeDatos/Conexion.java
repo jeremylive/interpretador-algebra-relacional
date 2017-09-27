@@ -51,7 +51,7 @@ public class Conexion
      * @return 
      */
     public Connection getConexion()
-    {
+        {
         status = false;
         String url = "jdbc:sqlserver://DESKTOP-4P39MH5\\live:1433;databaseName=bdproy1";
         try{

@@ -135,17 +135,22 @@ public class Register extends javax.swing.JFrame
         for (int i = 0; i <= cont; i++){
             try {
                 
+                ResultSet output1;
+                conexx.getConexion();
+                output1 = conexx.consultaSql("SELECT * FROM proy1.#"+name_all_temp[i]);
                 
-                output = conexx.consultaSql("SELECT * FROM proy1.#"+name_all_temp[i]);
+                ResultSetMetaData metaDatos = output1.getMetaData();
                 
-                    ResultSetMetaData metaDatos = output.getMetaData();
+                
+                //DBTablePrinter.printResultSet(output1);
+                
                 int index=metaDatos.getColumnCount();
                 
                 System.out.println(name_all_temp[i]);
-                while(output.next()){
+                while(output1.next()){
                     for(int x=1;x<=index;x++){
                         //Extraigo tuplas
-                        System.out.println(output.getString(x));     
+                        System.out.println(output1.getString(x));     
                         
                     }
                 }
@@ -811,13 +816,13 @@ public class Register extends javax.swing.JFrame
 
         if(tabla_input1.getText().isEmpty() || predicado.getText().isEmpty() || tabla_input2.getText().isEmpty())
        {
-           JOptionPane.showMessageDialog(this, "Insert your date correctly","Information",JOptionPane.INFORMATION_MESSAGE);
+           JOptionPane.showMessageDialog(this, "¡¡¡Inserte sus datos correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
            cleanText();
        } else {
             try {
                 PreparedStatement updateSql = Conexion.contacto.prepareStatement("update userProfile set name='"+predicado.getText()+"', carrer='"+tabla_result.getText()+"' where id='"+tabla_input1.getText()+"'");
                 updateSql.executeUpdate();
-                JOptionPane.showMessageDialog(null, "Los datos han sido modificados");
+                JOptionPane.showMessageDialog(null, "¡¡¡Los datos han sido modificados!!!");
                 //cargarTabla();
                 cleanText();
             } catch(SQLException e) {
@@ -842,24 +847,31 @@ public class Register extends javax.swing.JFrame
      * @param evt 
      */
     private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
-        // TODO add your handling code here:
+        //
         String operator = jComboBox1.getSelectedItem().toString();
-        JOptionPane.showMessageDialog(null, "Operacion elegida: "+operator);    
-        
+        JOptionPane.showMessageDialog(null, "¡¡¡La operacion elegida: "+operator+"!!!");    
+        //
         modeloRelacional(operator);
     }//GEN-LAST:event_jToggleButton2ActionPerformed
 
     /**
-     * 
+     * Boton acerca
      * @param evt 
      */
     private void acerca_deActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acerca_deActionPerformed
-        
+        //
         JOptionPane.showMessageDialog(null, "Nombre de la aplicación: Interprete de Algebra Relacional\nVensión: 01.01.01\nFecha de creación: 13/09/17\nAutores: Jeremy José Live González","Acerca de..",JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_acerca_deActionPerformed
 
+    /**
+     * Boton ayuda
+     * @param evt 
+     */
     private void ayudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ayudaActionPerformed
         //Muestro manual del software
+       
+        JOptionPane.showInternalMessageDialog(null, "MANUAL","MANUAL",3);
+        
         
     }//GEN-LAST:event_ayudaActionPerformed
 

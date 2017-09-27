@@ -48,6 +48,11 @@ public class Interface extends javax.swing.JFrame
         });
 
         EXIT.setText("EXIT");
+        EXIT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EXITActionPerformed(evt);
+            }
+        });
 
         ADMI.setText("ADMI");
         ADMI.addActionListener(new java.awt.event.ActionListener() {
@@ -144,7 +149,7 @@ public class Interface extends javax.swing.JFrame
             obj.setVisible(true);
             //obj.cargarTabla();
         }else {
-            JOptionPane.showMessageDialog(null, "Usuario Inconrrecto","Error",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "¡¡¡Usuario Inconrrecto!!!","¡¡¡Error!!!",JOptionPane.ERROR_MESSAGE);
             jTextField1.setText("");
             jTextField2.setText("");
         }
@@ -152,7 +157,13 @@ public class Interface extends javax.swing.JFrame
     
     private void ADMIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ADMIActionPerformed
 
+        //Conexion del usuario administrador
+        
     }//GEN-LAST:event_ADMIActionPerformed
+
+    private void EXITActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EXITActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_EXITActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ADMI;
