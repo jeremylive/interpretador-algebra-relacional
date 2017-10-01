@@ -6,6 +6,7 @@ package BaseDeDatos;
  * Librerias a usar en este programa administrador de una BD
  */
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -17,6 +18,7 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 /**
  * Menu principal del programa de administrador de bases de datos
@@ -24,177 +26,75 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Register extends javax.swing.JFrame 
 {
-    /**
-     * Variables globales
-     */
-    private ResultSet output;           //Guarda el resultado del query
-    private int isCheck;               //Contador para
-    private String id;
-    private boolean bolean;
-    private int cont=0;
-    //Variable con todos los nombres de las tablas temporales
-    private String[] name_all_temp = new String[20];
-    private String[] name_all_per = {"sucursal", "cliente", "impositor", "cuenta", "prestatario", "préstamo"};
-    private Conexion conexx;
+    //Variables globales
+    private ControladorSQLJAVA control;
+    
     /**
      * Constructor
      */
-    public Register(Conexion conex) 
+    public Register() 
     {
         initComponents();
-        conexx = conex;
+        this.control = new ControladorSQLJAVA(this);
     }
-    
     /**
-     * Funcion que carga la tabla de datos con los datos actualizados
+     * Funciones get and set
      */
-    public void cargarTablaSeleccion(String name_tablaInput, String predicado_aux, String name_tablaOutput)
+    //obtengo tabla input 1
+    public String getInput1()
     {
-        //Obtengo la tabla de la Base de datos para poder agregarla
-        DefaultTableModel modelo = (DefaultTableModel) jTable1.getModel();
-        modelo.setRowCount(0);
-        
-        try{
-            //Hago la selecion de la tabla
-            output = conexx.consultaSql("SELECT * FROM proy1."+name_tablaInput+" WHERE "+predicado_aux);
-            
-            //Obtengo el total de columnas que tiene la tabla
-            ResultSetMetaData metaDatos = output.getMetaData();
-            int index=metaDatos.getColumnCount();
-            
-            String sqlQuery = "CREATE TABLE proy1.#"+name_tablaOutput+" ";
-            String sqlQuery2 = "(";
-            String sqlQuery3 = "";
-            
-            //Inserto datos en la tabla a mostrar
-            while(output.next()){
-                for(int i=1; i<=index; i++){
-                    //Obtengo info de la tabla 
-                    if(i == index){
-                        sqlQuery3 += metaDatos.getColumnName(i);
-                        sqlQuery2 += metaDatos.getColumnName(i) 
-                           + " "
-                           + metaDatos.getColumnTypeName(i)
-                           + "(" + Integer.toString(metaDatos.getPrecision(i))
-                           + ")";
-                    }else{
-                        sqlQuery3 += metaDatos.getColumnName(i) + ", ";
-                        sqlQuery2 += metaDatos.getColumnName(i) 
-                            + " "
-                            + metaDatos.getColumnTypeName(i)
-                            + "(" + Integer.toString(metaDatos.getPrecision(i))
-                            + ")"
-                            + ", ";
-                    }
-                }
-            }
-            //Datos a utilizar
-            sqlQuery= sqlQuery+sqlQuery2+")";
-            System.out.println(sqlQuery + "\n" + sqlQuery2 + "\n" + sqlQuery3);
-            
-            String insertT = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") " 
-                    +"SELECT * FROM proy1."+name_tablaInput+" WHERE "+predicado_aux;
-            
-            String insertF = "SELECT * FROM proy1.#"+name_tablaOutput;
-   
-            System.out.println("\n" + insertT + "\n" + insertF);
-            
-            //Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
-            output = conexx.consultaSqlCreate(sqlQuery, insertT, insertF); 
-                   
-            //Imprimo la tabla temporal
-            metaDatos = output.getMetaData();
-            index = metaDatos.getColumnCount();      
-            
-            while(output.next()){
-                Vector v = new Vector();
-                
-                for(int i=1;i<=index;i++){
-                    //Extraigo tuplas
-                    v.add(output.getString(i));      
-                }
-                modelo.addRow(v);
-                jTable1.setModel(modelo);
-            }
-            
-            //Aumento contador de nombre de la tabla temporal
-            name_all_temp[cont]=name_tablaOutput;
-            cont++;
-            System.out.println(name_all_temp[cont-1]);
-            
-        } catch (SQLException e) {
-            //nothing
-        }
+        return tabla_input1.getText(); 
     }
-    
-    /**
-     * Función que imprime todas las tablas temporales
-     */
-    public void printTablaTemps()
+    //obtengo tabla input 2
+    public String getInput2()
     {
-        for (int i = 0; i <= cont; i++){
-            try {
-                
-                ResultSet output1;
-                conexx.getConexion();
-                output1 = conexx.consultaSql("SELECT * FROM proy1.#"+name_all_temp[i]);
-                
-                ResultSetMetaData metaDatos = output1.getMetaData();
-                
-                
-                //DBTablePrinter.printResultSet(output1);
-                
-                int index=metaDatos.getColumnCount();
-                
-                System.out.println(name_all_temp[i]);
-                while(output1.next()){
-                    for(int x=1;x<=index;x++){
-                        //Extraigo tuplas
-                        System.out.println(output1.getString(x));     
-                        
-                    }
-                }
-                
-                
-            } catch (SQLException ex) {
-                Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            
-        }
+        return tabla_input2.getText();
     }
-    
-    /**
-     * Funcion que imprime todas las tablas permanentes
-     */
-    public void printTablaPermanentes()
+    //obtengo tabla output
+    public String getOutput()
     {
-        for (int i = 0; i <= cont; i++){
-            try {
-                output = conexx.consultaSql("SELECT * FROM proy1."+name_all_per[i]);
-                
-                ResultSetMetaData metaDatos = output.getMetaData();
-                int index=metaDatos.getColumnCount();
-                
-                System.out.println(name_all_per[i]);
-                while(output.next()){
-                    for(int x=1;x<=index;x++){
-                        //Extraigo tuplas
-                        System.out.println(output.getString(x));     
-                        
-                    }
-                }
-                
-                
-            } catch (SQLException ex) {
-                Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            
-        }
+        return tabla_result.getText();
     }
-    
-    
+    //obtengo el predicado
+    public String getPredicado()
+    {
+        return predicado.getText();
+    }
+    //obtengo nombre de atributos
+    public String getNombreA()
+    {
+        return nombre_atributos.getText();
+    }
+    //obtengo operacion de agregacion
+    public String getOperAgre()
+    {
+        return oper_agre.getText();
+    }   
+    //
+    public DefaultTableModel getTablaModel()
+    {
+        return (DefaultTableModel) tabla0.getModel();
+    }
+    //
+    public void setTablaModel(DefaultTableModel model0)
+    {
+        tabla0.setModel(model0);
+    }
+    //
+    public void setAlgebraR(String query)
+    {
+        algebra_relacional.setText(query);
+    }
+    //
+    public void setSql(String query)
+    {
+        sql.setText(query);
+    }
+    //
+    public ControladorSQLJAVA getControl()
+    {
+        return control;
+    }
     /**
      * Funcion para limpiar los campos del jTextField
      */
@@ -208,105 +108,9 @@ public class Register extends javax.swing.JFrame
         tabla_result.requestFocus();
     }
     
-    /**
-     * Función que imprime el output en modelo relacional
-     * Parametros:
-     *  1. nombre tabla input, 2. predicado, 3. nombre tabla output
-     */
-    public void modeloRelacional(String operator_aux)
-    {
-       //Verifica si la informacion esta digitada
-       if(tabla_input1.getText().isEmpty() || predicado.getText().isEmpty())
-       {
-           JOptionPane.showMessageDialog(this, "¡¡¡Inserte la TABLA INPUT 1 y el PREDICADO correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
-           cleanText();
-       } else {
-            switch(operator_aux){           
-                      
-                case "Selección":
-                    //Caso cuando no colocá el nombre de la TABLA OUTPUT
-                    if(tabla_result.getText().isEmpty()){
-                        algebra_relacional.setText("σ "+predicado.getText()+"("+tabla_input1.getText()+")");
-                        sql.setText("SELECT * FROM "+tabla_input1.getText()+" WHERE "+predicado.getText());
-                        JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
-                    //Caso en que si digita toda la informacion
-                    }else{
-                        algebra_relacional.setText(tabla_result.getText()+" <- σ "+predicado.getText()+"("+tabla_input1.getText()+")");
-                        sql.setText("SELECT * FROM "+tabla_input1.getText()+" WHERE "+predicado.getText());
-                        cargarTablaSeleccion(tabla_input1.getText(), predicado.getText(), tabla_result.getText());
-                    }
-                    break;
-                
-                case "Proyección Generalizada":
-                    //Caso cuando no colocá el nombre de la TABLA OUTPUT
-                    if(tabla_result.getText().isEmpty()){
-                        algebra_relacional.setText(tabla_result.getText()+" <- π "+predicado.getText()+"("+tabla_input1.getText()+")");
-                        sql.setText("SELECT * FROM "+tabla_input1.getText()+" WHERE "+predicado.getText());
-                        JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
-                    //Caso en que si digita toda la informacion
-                    }else{
-                        algebra_relacional.setText(tabla_result.getText()+" <- π "+predicado.getText()+"("+tabla_input1.getText()+")");
-                        sql.setText("SELECT * FROM "+tabla_input1.getText()+" WHERE "+predicado.getText());
-                        cargarTablaSeleccion(tabla_input1.getText(), predicado.getText(), tabla_result.getText());
-                             
-                    }
-                    break;
-                    
-                case "Unión":
-                    
-                    break;
-                    
-                case "Diferencia de conjuntos":
-                    break;
-                    
-                case "Producto Cartesiano":
-                    break;
-                    
-                case "Intersección":
-                    break;
-                
-                case "División":
-                    break;
-                 
-                case "Renombrar una relación y sus atributos":
-                    
-                    break;
-                    
-                case "Concatenación":
-                    break;
-                    
-                case "Concatenación natural":
-                    break;
-                    
-                case "Agregación":
-                    break;
-                    
-                case "Agrupación":
-                    break;
-                   
-                case "Ver referencia cruzada atributos/tablas":
-                    break;                    
-                default:
-                    break;
-            };
-            
-            
-            cleanText();
-            JOptionPane.showMessageDialog(this, "The date was successfully correctly");
-
-       }
-    }
-    
-    
-    /**
-     * Funcion imprimir todas las tablas
-     */
     
     
     
-    /**
-     * Funcion imprimir todas las tablas temporales
-     */
     
     
     //Codigo sucio de netbeans
@@ -317,7 +121,7 @@ public class Register extends javax.swing.JFrame
 
         jRadioButtonMenuItem1 = new javax.swing.JRadioButtonMenuItem();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tabla0 = new javax.swing.JTable();
         tabla_input1 = new javax.swing.JTextField();
         tabla_result = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -336,7 +140,7 @@ public class Register extends javax.swing.JFrame
         jLabel8 = new javax.swing.JLabel();
         nombre_atributos = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        oper_agre = new javax.swing.JTextField();
         predicado = new javax.swing.JTextField();
         ayuda = new javax.swing.JButton();
         acerca_de = new javax.swing.JButton();
@@ -344,6 +148,8 @@ public class Register extends javax.swing.JFrame
         jTextField2 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -363,7 +169,7 @@ public class Register extends javax.swing.JFrame
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tabla0.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -374,7 +180,7 @@ public class Register extends javax.swing.JFrame
                 "Id", "Name", "Carrer"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tabla0);
 
         tabla_input1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -391,6 +197,11 @@ public class Register extends javax.swing.JFrame
         jLabel4.setText("Tabla resultante despues de hacer la operación");
 
         algebra_relacional.setText("Algebra Relacional");
+        algebra_relacional.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                algebra_relacionalActionPerformed(evt);
+            }
+        });
 
         sql.setText("SQL");
         sql.addActionListener(new java.awt.event.ActionListener() {
@@ -433,6 +244,12 @@ public class Register extends javax.swing.JFrame
 
         jLabel9.setText("Operaciones agregación");
 
+        oper_agre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                oper_agreActionPerformed(evt);
+            }
+        });
+
         ayuda.setFont(new java.awt.Font("Yu Gothic", 0, 24)); // NOI18N
         ayuda.setText("Ayuda");
         ayuda.addActionListener(new java.awt.event.ActionListener() {
@@ -473,6 +290,17 @@ public class Register extends javax.swing.JFrame
                 jButton2ActionPerformed(evt);
             }
         });
+
+        jButton3.setFont(new java.awt.Font("Yu Gothic", 0, 14)); // NOI18N
+        jButton3.setText("Administrador DB");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton4.setFont(new java.awt.Font("Yu Gothic", 0, 14)); // NOI18N
+        jButton4.setText("Ver referencia cruzada / tablas");
 
         jMenu1.setText("INICIO");
 
@@ -540,50 +368,43 @@ public class Register extends javax.swing.JFrame
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jToggleButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(acerca_de, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(ayuda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(117, 117, 117)
-                .addComponent(jLabel4)
+                .addGap(166, 166, 166)
+                .addComponent(jLabel11)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jToggleButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(acerca_de, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(ayuda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(166, 166, 166)
-                        .addComponent(jLabel11)
-                        .addGap(367, 367, 367)
-                        .addComponent(jTextField2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(52, 52, 52)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(sql, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(algebra_relacional, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(118, 118, 118)
-                                .addComponent(jLabel5))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(124, 124, 124)
-                                .addComponent(jLabel6))
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(81, 81, 81)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jTextField1))
+                                .addGap(117, 117, 117)
+                                .addComponent(jLabel4))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(33, 33, 33)
+                                .addGap(52, 52, 52)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(sql, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(algebra_relacional, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(118, 118, 118)
+                                        .addComponent(jLabel5))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(124, 124, 124)
+                                        .addComponent(jLabel6))
+                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(81, 81, 81)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
@@ -607,17 +428,21 @@ public class Register extends javax.swing.JFrame
                                         .addGroup(layout.createSequentialGroup()
                                             .addComponent(jLabel8)
                                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(nombre_atributos, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))))))))
-                .addGap(63, 63, 63))
+                                            .addComponent(nombre_atributos, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jLabel9)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(oper_agre, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                        .addGap(0, 53, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel11))
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap()
+                .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -653,25 +478,34 @@ public class Register extends javax.swing.JFrame
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel9)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(oper_agre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel4))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jToggleButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(acerca_de, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(acerca_de, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ayuda, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(ayuda, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         pack();
@@ -695,7 +529,7 @@ public class Register extends javax.swing.JFrame
      * @param evt 
      */
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-       
+       /*
        //Verifica si la informacion esta digitada
        if(tabla_input1.getText().isEmpty() || predicado.getText().isEmpty() || tabla_input1.getText().isEmpty())
        {
@@ -704,7 +538,7 @@ public class Register extends javax.swing.JFrame
        } else {
            try {
                //Obtengo un 1 o más si el nombre existe en la base de datos
-               output = conexx.consultaSql("select COUNT(name) from userProfile where name='"+predicado.getText()+"'");
+               output = Conexion.consultaSql("select COUNT(name) from userProfile where name='"+predicado.getText()+"'");
                try {
                    while(output.next()){
                        isCheck = output.getInt(1);
@@ -720,7 +554,7 @@ public class Register extends javax.swing.JFrame
                {
                    JOptionPane.showMessageDialog(this, "¡¡¡El usuario digitado ya existe!!!","Information",JOptionPane.INFORMATION_MESSAGE);
                } else {
-                   conexx.insertaUser(tabla_input1.getText(), predicado.getText(), tabla_result.getText());
+                   Conexion.insertaUser(tabla_input1.getText(), predicado.getText(), tabla_result.getText());
                    cleanText();
                    JOptionPane.showMessageDialog(this, "¡¡¡Los datos fueron satisfactoriamente correctos!!!");
                    //cargarTabla();
@@ -729,6 +563,7 @@ public class Register extends javax.swing.JFrame
                //nothing
            }   
        }
+        */
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void tabla_input1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tabla_input1ActionPerformed
@@ -745,14 +580,14 @@ public class Register extends javax.swing.JFrame
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
 
         int row = -1;
-        row = jTable1.getSelectedRow();
+        row = tabla0.getSelectedRow();
 
         if(row != -1){
             int opc = JOptionPane.showConfirmDialog(this, "¿Do you want to eliminate this register","Question",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
             if(opc == JOptionPane.YES_OPTION)
             {
                 try {
-                    conexx.dropUser(jTable1.getValueAt(row, 0).toString());
+                    Conexion.dropUser(tabla0.getValueAt(row, 0).toString());
                     //cargarTabla();
                 } catch (SQLException e) {
                     //Nothing
@@ -773,7 +608,7 @@ public class Register extends javax.swing.JFrame
      * @param evt 
      */
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-        
+        /*
         if(tabla_input1.getText().isEmpty())
         {
             JOptionPane.showMessageDialog(this, "Inserte bien sus datos","Error",JOptionPane.ERROR_MESSAGE);
@@ -781,9 +616,9 @@ public class Register extends javax.swing.JFrame
             tabla_input1.requestFocus();
         } else {
             try {
-                output = conexx.consultaSql("select * from userProfile");
+                output = Conexion.consultaSql("select * from userProfile");
                 id = tabla_input1.getText();
-                conexx.searchUser(id);
+                Conexion.searchUser(id);
                 cleanText();
                 
                 while(output.next())
@@ -807,13 +642,14 @@ public class Register extends javax.swing.JFrame
                 //Nothing
             }
         }
+        */
     }//GEN-LAST:event_jMenuItem5ActionPerformed
     /**
      * Boton Modificar
      * @param evt 
      */
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
-
+        /*
         if(tabla_input1.getText().isEmpty() || predicado.getText().isEmpty() || tabla_input2.getText().isEmpty())
        {
            JOptionPane.showMessageDialog(this, "¡¡¡Inserte sus datos correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
@@ -829,6 +665,7 @@ public class Register extends javax.swing.JFrame
                 //Nothing
             }
         }
+        */
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void sqlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sqlActionPerformed
@@ -851,7 +688,7 @@ public class Register extends javax.swing.JFrame
         String operator = jComboBox1.getSelectedItem().toString();
         JOptionPane.showMessageDialog(null, "¡¡¡La operacion elegida: "+operator+"!!!");    
         //
-        modeloRelacional(operator);
+        getControl().modeloRelacional(operator);
     }//GEN-LAST:event_jToggleButton2ActionPerformed
 
     /**
@@ -886,7 +723,7 @@ public class Register extends javax.swing.JFrame
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
                 
-        printTablaTemps();
+        getControl().printTablaTemps();
                  
 
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -899,9 +736,26 @@ public class Register extends javax.swing.JFrame
         //case "Ver tablas de la base de datos":
         //            break;
         
-        printTablaPermanentes();
+        getControl().printTablaPermanentes();
         
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        
+         DbaInterfaz obj = new DbaInterfaz();
+         obj.setVisible(true);
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void oper_agreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oper_agreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_oper_agreActionPerformed
+
+    private void algebra_relacionalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_algebra_relacionalActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_algebra_relacionalActionPerformed
    
     /**
      * -------------------------------------------------------------------------
@@ -918,6 +772,8 @@ public class Register extends javax.swing.JFrame
     private javax.swing.JButton ayuda;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
@@ -944,14 +800,14 @@ public class Register extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JRadioButtonMenuItem jRadioButtonMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
     private javax.swing.JTextField nombre_atributos;
+    private javax.swing.JTextField oper_agre;
     private javax.swing.JTextField predicado;
     private javax.swing.JTextField sql;
+    private javax.swing.JTable tabla0;
     private javax.swing.JTextField tabla_input1;
     private javax.swing.JTextField tabla_input2;
     private javax.swing.JTextField tabla_result;

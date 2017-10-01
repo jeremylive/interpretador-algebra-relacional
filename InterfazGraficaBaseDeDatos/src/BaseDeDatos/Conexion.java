@@ -16,8 +16,9 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
- *
+ *-----------------------------------------------------------------------------
  * @author Jeremy Live
+ * ----------------------------------------------------------------------------
  */
 public class Conexion 
 {
@@ -29,6 +30,7 @@ public class Conexion
     public static String usuario;
     public static String password;
     public static boolean status = false;
+
     //Creo conexino a la base de datos
     public static Statement declara;
     public static ResultSet respuesta;
@@ -39,18 +41,25 @@ public class Conexion
      * ########################################################################
      */
     /**
-     * Set contacto
+     * Gets and sets
      */
-    public void setContacto()
+    public static String getName()
+    {
+        return Conexion.usuario;
+    }
+    public static String getPass()
+    {
+        return Conexion.password;
+    }
+    public static void setContacto()
     {
         contacto = getConexion();
-    }
-    
+    }    
     /**
      * Obtengo la conexion del sqlserver con netbeans
      * @return 
      */
-    public Connection getConexion()
+     public static Connection getConexion()
         {
         status = false;
         String url = "jdbc:sqlserver://DESKTOP-4P39MH5\\live:1433;databaseName=bdproy1";
@@ -75,7 +84,8 @@ public class Conexion
      * @param usuario
      * @param password 
      */
-    public void setcuenta(String usuario, String password){
+    public static void setcuenta(String usuario, String password)
+    {
         Conexion.usuario = usuario;
         Conexion.password = password;
     }
@@ -83,7 +93,8 @@ public class Conexion
      * Obtengo el estado de la conexion de la BD
      * @return 
      */
-    public boolean getstatus(){
+    public static boolean getstatus()
+    {
         return  status;
     }
     /**
@@ -91,7 +102,7 @@ public class Conexion
      * @param consulta
      * @return 
      */
-    public ResultSet consultaSql(String consulta)
+    public static ResultSet consultaSql(String consulta)
     {
         //Creo conexino a la base de datos
         //Connection con = getConexion();
@@ -110,16 +121,17 @@ public class Conexion
     }
     
     /**
-     * 2
-     * @param consulta
-     * @return 
+     * Obtengo la consulta deseada
+     * @param sqlQuery
+     * @param sqlInsert
+     * @param sqlInsertF
+     * @return el dato resultset que tiene la vista de la tabla
      */
-    public ResultSet consultaSqlCreate(String sqlQuery, String sqlInsert, String sqlInsertF)
+    public static ResultSet consultaSqlCreate(String sqlQuery, String sqlInsert, String sqlInsertF)
     {
         //Creo conexino a la base de datos
         //Connection con = getConexion();
-        try {
-            
+        try {     
             //Obtengo el resultado del a consulta 
             declara = contacto.createStatement();         
             //Creo tabla temporal
@@ -149,7 +161,7 @@ public class Conexion
      * @param carrer
      * @throws SQLException 
      */
-    public void insertaUser(String id, String name, String carrer) throws SQLException
+    public static void insertaUser(String id, String name, String carrer) throws SQLException
     {
         CallableStatement input = contacto.prepareCall("{call insertaUser(?,?,?)}");
         input.setString(1, id);
@@ -162,14 +174,14 @@ public class Conexion
      * @param id
      * @throws SQLException 
      */
-    public void dropUser(String id) throws SQLException
+    public static void dropUser(String id) throws SQLException 
     {
         CallableStatement input = contacto.prepareCall("{call dropUser(?)}");
         input.setString(1, id);
         input.execute();
     }
     
-    public void searchUser(String id) throws SQLException
+    public static void searchUser(String id) throws SQLException
     {
         CallableStatement input = contacto.prepareCall("{call searchUser(?)}");
         input.setString(1, id);
