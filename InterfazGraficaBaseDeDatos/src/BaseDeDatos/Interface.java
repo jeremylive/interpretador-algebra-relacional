@@ -137,10 +137,10 @@ public class Interface extends javax.swing.JFrame
         
         //Si es estable entonces abra la ventana registro
         if(Conexion.getstatus())
-        {
-            Register obj = new Register();
-            obj.setVisible(true);
-            //obj.cargarTabla();
+        {                    
+            DbaInterfaz interfaz2 = new DbaInterfaz();
+            interfaz2.setLocationRelativeTo(null);
+            interfaz2.setVisible(true);     
         }else {
             JOptionPane.showMessageDialog(null, "¡¡¡Usuario Inconrrecto!!!","¡¡¡Error!!!",JOptionPane.ERROR_MESSAGE);
             jTextField1.setText("");

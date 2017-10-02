@@ -33,6 +33,10 @@ public class ControladorSQLJAVA
     private String[] name_all_per  = {"sucursal", "cliente", "impositor", "cuenta", "prestatario", "préstamo"};
     private Register register;          //Control con la interfaz
     
+    private String insertTemp;
+    private String selectTemp;
+    
+    
     //Constructor
     public ControladorSQLJAVA(Register regis)
     {
@@ -47,6 +51,15 @@ public class ControladorSQLJAVA
         return this.register;
     }
     //
+    public void setTemp(String table, int cont)
+    {
+        this.name_all_temp[cont] = table;
+    }
+    //
+    public String getTemp(int cont)
+    {
+        return this.name_all_temp[cont];
+    }
     
     /**
      * Funcion que carga la tabla de datos con los datos actualizados
@@ -68,9 +81,9 @@ public class ControladorSQLJAVA
     {
         
         //Creo variables
-        String sqlQuery = "CREATE TABLE proy1.#"+name_tablaOutput+" ";
-        String sqlQuery2 = "(";
-        String sqlQuery3 = "";
+        String sqlQuery = "CREATE TABLE proy1.#"+name_tablaOutput+" ";  //Tabla temporal
+        String sqlQuery2 = "("; //atributos con tipo
+        String sqlQuery3 = "";  //atributos
         
         //Obtengo la tabla de la Base de datos para poder agregarla
         DefaultTableModel modelo = getRegister().getTablaModel();
@@ -114,19 +127,20 @@ public class ControladorSQLJAVA
             }
             //Datos a utilizar
             sqlQuery= sqlQuery+sqlQuery2+")";
+            
             System.out.println(sqlQuery + "\n" + sqlQuery2 + "\n" + sqlQuery3);
             
-            String insertT = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") " 
+            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") "
                     +"SELECT * FROM proy1."+name_tablaInput+" WHERE "+predicado_aux;
             
-            String insertF = "SELECT * FROM proy1.#"+name_tablaOutput;
+            selectTemp = "SELECT * FROM proy1.#"+name_tablaOutput;
    
-            System.out.println("\n" + insertT + "\n" + insertF);
+            System.out.println("\n" + insertTemp + "\n" + selectTemp);
             
             
             
             //Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
-            output = Conexion.consultaSqlCreate(sqlQuery, insertT, insertF); 
+            output = Conexion.consultaSqlCreate(sqlQuery, insertTemp, selectTemp); 
                    
             //Imprimo la tabla temporal
             metaDatos = output.getMetaData();
@@ -145,9 +159,11 @@ public class ControladorSQLJAVA
             }
             
             //Aumento contador de nombre de la tabla temporal
-            name_all_temp[cont]=name_tablaOutput;
-            cont++;
-            System.out.println("nameTempe"+name_all_temp[cont-1]);
+            System.out.println("\n ....."+name_tablaOutput);
+            setTemp(name_tablaOutput, cont);
+            //this.name_all_temp[cont]=name_tablaOutput;
+            this.cont++;
+            System.out.println("nameTempe "+getTemp(cont-1));
             
         } catch (SQLException e) {
             //nothing
@@ -173,59 +189,7 @@ public class ControladorSQLJAVA
         }
     }
     //-----------
-    
-    /**
-     * Funcion consulta alternativa
-     */
-    public void consultAlter(String name_tablaInput, String predicado_aux)
-    {
-        String url = "jdbc:sqlserver://DESKTOP-4P39MH5\\live:1433;databaseName=bdproy1";
-        Connection con;
-        Statement stmt;
-        String query = "SELECT * FROM proy1."+name_tablaInput+" WHERE "+predicado_aux;
-        
-        try {
-          con = DriverManager.getConnection(url,Conexion.getName(), Conexion.getPass());        
-          stmt = con.createStatement();              
-          ResultSet rs = stmt.executeQuery(query);
-          ResultSetMetaData rsmd = rs.getMetaData();
-          
-          printColTypes(rsmd);
-          System.out.println("");
-          
-          ResultSetMetaData rsmd1 = rs.getMetaData();
-          
-          int numberOfColumns = rsmd1.getColumnCount();
 
-          //Recorro la tabla y obtengo el nombre de las columnas
-          for (int i = 1; i <= numberOfColumns; i++) {
-            if (i > 1) System.out.print(",  ");
-            String columnName = rsmd1.getColumnName(i);
-            System.out.print(columnName);
-          }
-          System.out.println("");
-
-          //Recorro la tabla y obtengo el valor del atributo
-          while (rs.next()) {
-            for (int i = 1; i <= numberOfColumns; i++) {
-              if (i > 1) System.out.print(",  ");
-              String columnValue = rs.getString(i);
-              System.out.print(columnValue);
-            }
-            System.out.println("");  
-          }
-
-          //Cierro el programa
-          stmt.close();
-          con.close();
-
-        } catch(SQLException ex) {
-          //Clausula de error
-          System.err.print("SQLException: ");
-          System.err.println(ex.getMessage());
-        }  
-    
-    }
     /**
      * Funcion 00#
      */
@@ -248,12 +212,13 @@ public class ControladorSQLJAVA
     public void printTablaTemps()
     {
         
-        for (int i = 0; i <= cont; i++){
+        for (int i = 0; i < cont; i++){
             try {
                 
                 //ResultSet output1;
                 //conexx.getConexion();
-                output = Conexion.consultaSql("SELECT * FROM proy1.#"+name_all_temp[i]);
+                System.out.println("contador="+cont+" name: "+getTemp(i));
+                output = Conexion.consultaSql("SELECT * FROM proy1.#"+getTemp(i));
                 
                 ResultSetMetaData metaDatos = output.getMetaData();
                 
@@ -262,7 +227,7 @@ public class ControladorSQLJAVA
                 
                 int index=metaDatos.getColumnCount();
                 
-                System.out.println(name_all_temp[i]);
+                
                 while(output.next()){
                     for(int x=1;x<=index;x++){
                         //Extraigo tuplas
@@ -273,7 +238,7 @@ public class ControladorSQLJAVA
                 
                 
             } catch (SQLException ex) {
-                Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
+                //nothing
             }
             
             
@@ -338,7 +303,7 @@ public class ControladorSQLJAVA
                         getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" WHERE "+getRegister().getPredicado());
                         cargarTablaSeleccion(getRegister().getInput1(), getRegister().getPredicado(), getRegister().getOutput());
                         //consultAlter(tabla_input1.getText(), predicado.getText());
-                        //carga1(tabla_input1.getText(), predicado.getText());
+                        //carga1(getRegister().getInput1(), getRegister().getPredicado());
                     }
                     break;
                 
@@ -389,9 +354,7 @@ public class ControladorSQLJAVA
                     
                 case "Agrupación":
                     break;
-                   
-                case "Ver referencia cruzada atributos/tablas":
-                    break;                    
+                                
                 default:
                     break;
             };
@@ -404,3 +367,136 @@ public class ControladorSQLJAVA
     }
 //Fin del programa controlador del interprete de algebra SQL/JAVA
 }
+
+
+    
+    /*
+    public void consultAlter(String name_tablaInput, String predicado_aux)
+    {
+        String url = "jdbc:sqlserver://DESKTOP-4P39MH5\\live:1433;databaseName=bdproy1";
+        Connection con;
+        Statement stmt;
+        String query = "SELECT * FROM proy1."+name_tablaInput+" WHERE "+predicado_aux;
+        
+        try {
+          con = DriverManager.getConnection(url,Conexion.getName(), Conexion.getPass());        
+          stmt = con.createStatement();              
+          ResultSet rs = stmt.executeQuery(query);
+          ResultSetMetaData rsmd = rs.getMetaData();
+          
+          printColTypes(rsmd);
+          System.out.println("");
+          
+          ResultSetMetaData rsmd1 = rs.getMetaData();
+          
+          int numberOfColumns = rsmd1.getColumnCount();
+
+          //Recorro la tabla y obtengo el nombre de las columnas
+          for (int i = 1; i <= numberOfColumns; i++) {
+            if (i > 1) System.out.print(",  ");
+            String columnName = rsmd1.getColumnName(i);
+            System.out.print(columnName);
+          }
+          System.out.println("");
+
+          //Recorro la tabla y obtengo el valor del atributo
+          while (rs.next()) {
+            for (int i = 1; i <= numberOfColumns; i++) {
+              if (i > 1) System.out.print(",  ");
+              String columnValue = rs.getString(i);
+              System.out.print(columnValue);
+            }
+            System.out.println("");  
+          }
+
+          //Cierro el programa
+          stmt.close();
+          con.close();
+
+        } catch(SQLException ex) {
+          //Clausula de error
+          System.err.print("SQLException: ");
+          System.err.println(ex.getMessage());
+        }  
+    
+    }
+    */
+
+
+/*
+public class DatabaseSQLiteConnection 
+{
+    Connection conn = null;
+    PreparedStatement statement = null;
+    ResultSet res = null;
+
+    public DatabaseSQLiteConnection()
+    {
+        try{
+            Class.forName("org.sqlite.JDBC");
+            conn = DriverManager.getConnection("jdbc:sqlite:test.sqlite");
+            statement = conn.prepareStatement("SELECT * from product_info;");
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }   
+
+    public void getnPrintAllData()
+    {
+        String name, supplier, id;
+        DefaultTableModel dtm = new DefaultTableModel();
+        Window gui = new Window(); //My JPanel class        
+        try{
+            res = statement.executeQuery();
+            testResultSet(res);
+            ResultSetMetaData meta = res.getMetaData();
+            int numberOfColumns = meta.getColumnCount();
+            while (res.next())
+            {
+                Object [] rowData = new Object[numberOfColumns];
+                for (int i = 0; i < rowData.length; ++i)
+                {
+                    rowData[i] = res.getObject(i+1);
+                }
+                dtm.addRow(rowData);
+            }
+            gui.jTable1.setModel(dtm);
+            dtm.fireTableDataChanged();
+            //////////////////////////
+
+        }
+        catch(Exception e){
+            System.err.println(e);
+            e.printStackTrace();
+        }
+        finally{
+            try{
+                res.close();
+                statement.close();
+                conn.close();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+    }    
+
+    public void testResultSet(ResultSet res)
+    {
+        try{
+            while(res.next()){
+                System.out.println("Product ID: "+ res.getInt("product_id"));
+                System.out.println("Product name: "+ res.getString("product_name"));
+                System.out.println("Supplier: "+ res.getString("supplier"));
+            }        
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
+
+
+
+*/

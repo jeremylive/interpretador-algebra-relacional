@@ -35,6 +35,9 @@ public class Conexion
     public static Statement declara;
     public static ResultSet respuesta;
 
+    //Manejo de info de las tablas
+    public static PreparedStatement declara2;
+    
     /**
      * ########################################################################
      * Funciones
@@ -108,9 +111,12 @@ public class Conexion
         //Connection con = getConexion();
         try {
             //Obtengo el resultado del a consulta 
-            declara = contacto.createStatement();
             
+            declara = contacto.createStatement();
             respuesta = declara.executeQuery(consulta);
+            
+            //declara2 = contacto.prepareStatement(consulta);
+            //respuesta = declara2.executeQuery();
             
             return respuesta;
         } catch (SQLException e) {
@@ -140,7 +146,7 @@ public class Conexion
             declara.executeUpdate(sqlInsert);
             //Selecciono la tabla temporal
             respuesta = declara.executeQuery(sqlInsertF);
-            
+   
             return respuesta;
         } catch (SQLException e) {
             //1-)Primera validación: la tabla debe existir

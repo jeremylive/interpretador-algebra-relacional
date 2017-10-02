@@ -19,7 +19,9 @@ public class Program
                 /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Interface().setVisible(true);
+                Interface interfaz1 = new Interface();
+                interfaz1.setLocationRelativeTo(null);
+                interfaz1.setVisible(true);
             }
         });
     }
