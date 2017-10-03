@@ -32,10 +32,11 @@ public class DbaInterfaz extends javax.swing.JFrame
         acerca_de = new javax.swing.JButton();
         ayuda = new javax.swing.JButton();
         ejecutarOper = new javax.swing.JButton();
+        Salir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Yu Gothic", 1, 24)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Yu Gothic", 1, 18)); // NOI18N
         jLabel1.setText("Eliga la operación a realizar:");
 
         operacion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selección", "Proyección Generalizada", "Unión", "Diferencia de conjuntos", "Producto Cartesiano", "Intersección", "División", "Renombrar una relación y sus atributos", "Concatenación", "Concatenación natural", "Agregación", "Agrupación" }));
@@ -69,25 +70,31 @@ public class DbaInterfaz extends javax.swing.JFrame
             }
         });
 
+        Salir.setFont(new java.awt.Font("Yu Gothic", 1, 18)); // NOI18N
+        Salir.setText("Salir");
+        Salir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                SalirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(ayuda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(acerca_de, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(ejecutarOper, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(Salir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(operacion, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(operacion, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(52, 52, 52)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(ayuda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(acerca_de, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(ejecutarOper))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(9, 9, 9)
+                        .addComponent(jLabel1)))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -96,13 +103,15 @@ public class DbaInterfaz extends javax.swing.JFrame
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(operacion, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33)
+                .addGap(18, 18, 18)
                 .addComponent(ejecutarOper, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(acerca_de, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(ayuda, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(Salir, javax.swing.GroupLayout.PREFERRED_SIZE, 28, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -127,63 +136,80 @@ public class DbaInterfaz extends javax.swing.JFrame
         Register interfaz3 = new Register(this);
         String operator = operacion.getSelectedItem().toString();
         
+        interfaz3.getAlgebra().setEditable(false);
+        interfaz3.getSql().setEditable(false);
+        interfaz3.getTable0().setEnabled(false);
+        interfaz3.getSigno().setEditable(false);
+        
+        
         switch(operator){
             case "Selección":
                 interfaz3.getTabla2().setEditable(false);
                 interfaz3.getNombreAField().setEditable(false);
                 interfaz3.getOperAgreField().setEditable(false);
+                interfaz3.getExpres().setEditable(false);
                 break;
 
             case "Proyección Generalizada":
                 interfaz3.getTabla2().setEditable(false);
                 interfaz3.getNombreAField().setEditable(false);
                 interfaz3.getOperAgreField().setEditable(false);
+                interfaz3.getPredicadoField().setEditable(false);
                 break;
             case "Unión":
+                interfaz3.getTabla2().setEditable(true);
                 interfaz3.getPredicadoField().setEditable(false);
                 interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);    
+                interfaz3.getOperAgreField().setEditable(false);
+                interfaz3.getExpres().setEditable(false);
                 break;
 
             case "Diferencia de conjuntos":
                 interfaz3.getPredicadoField().setEditable(false);
                 interfaz3.getNombreAField().setEditable(false);
                 interfaz3.getOperAgreField().setEditable(false);    
+                interfaz3.getExpres().setEditable(false);
                 break;
 
             case "Producto Cartesiano":
                 interfaz3.getPredicadoField().setEditable(false);
                 interfaz3.getNombreAField().setEditable(false);
                 interfaz3.getOperAgreField().setEditable(false);    
+                interfaz3.getExpres().setEditable(false);
                 break;
 
             case "Intersección":
                 interfaz3.getPredicadoField().setEditable(false);
                 interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);    
+                interfaz3.getOperAgreField().setEditable(false);  
+                interfaz3.getExpres().setEditable(false);
                 break;
 
             case "División":
                 interfaz3.getPredicadoField().setEditable(false);
                 interfaz3.getNombreAField().setEditable(false);
                 interfaz3.getOperAgreField().setEditable(false);    
+                interfaz3.getExpres().setEditable(false);
                 break;
 
             case "Renombrar una relación y sus atributos":
                 interfaz3.getPredicadoField().setEditable(false);
                 interfaz3.getTabla2().setEditable(false);
                 interfaz3.getOperAgreField().setEditable(false);    
+                interfaz3.getExpres().setEditable(false);
                 break;
 
             case "Concatenación":
                 interfaz3.getNombreAField().setEditable(false);
                 interfaz3.getOperAgreField().setEditable(false);    
+                interfaz3.getExpres().setEditable(false);
                 break;
 
             case "Concatenación natural":
                 interfaz3.getPredicadoField().setEditable(false);
                 interfaz3.getNombreAField().setEditable(false);
                 interfaz3.getTabla2().setEditable(false);    
+                interfaz3.getExpres().setEditable(false);
                 break;
 
             case "Agregación":
@@ -195,6 +221,7 @@ public class DbaInterfaz extends javax.swing.JFrame
             case "Agrupación":
                 interfaz3.getPredicadoField().setEditable(false);
                 interfaz3.getTabla2().setEditable(false);  
+                interfaz3.getExpres().setEditable(false);
                 break;
                 
             default:
@@ -208,8 +235,14 @@ public class DbaInterfaz extends javax.swing.JFrame
         
     }//GEN-LAST:event_ejecutarOperActionPerformed
 
+    private void SalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SalirActionPerformed
+        // TODO add your handling code here:
+        dispose();
+    }//GEN-LAST:event_SalirActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Salir;
     private javax.swing.JButton acerca_de;
     private javax.swing.JButton ayuda;
     private javax.swing.JButton ejecutarOper;

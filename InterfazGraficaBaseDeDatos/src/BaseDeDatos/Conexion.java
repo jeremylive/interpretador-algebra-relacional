@@ -29,15 +29,15 @@ public class Conexion
     public static Connection contacto;
     public static String usuario;
     public static String password;
-    public static boolean status = false;
-
+    public static boolean status;
     //Creo conexino a la base de datos
     public static Statement declara;
     public static ResultSet respuesta;
-
-    //Manejo de info de las tablas
-    public static PreparedStatement declara2;
-    
+    //Constructor
+    public Conexion()
+    {
+        this.status = false;
+    }  
     /**
      * ########################################################################
      * Funciones
@@ -54,17 +54,14 @@ public class Conexion
     {
         return Conexion.password;
     }
-    public static void setContacto()
-    {
-        contacto = getConexion();
-    }    
+    //public static void setContacto(){        Conexion.contacto = getConexion();}    
     /**
      * Obtengo la conexion del sqlserver con netbeans
      * @return 
      */
-     public static Connection getConexion()
+     public static void getConexion()
         {
-        status = false;
+        Conexion.status = false;
         String url = "jdbc:sqlserver://DESKTOP-4P39MH5\\live:1433;databaseName=bdproy1";
         try{
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -73,13 +70,13 @@ public class Conexion
         }
         
         try{
-            contacto = DriverManager.getConnection(url,Conexion.usuario, Conexion.password);                                                                      //
-            status = true;
-            return contacto;
+            Conexion.contacto = DriverManager.getConnection(url,Conexion.usuario, Conexion.password);                                                                      //
+            Conexion.status = true;
+            //return Conexion.contacto;
         }catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Error"+e.getMessage(),"warnning",JOptionPane.ERROR_MESSAGE);
         }
-        return null;
+        //return null;
         
     }
     /**
@@ -105,23 +102,18 @@ public class Conexion
      * @param consulta
      * @return 
      */
-    public static ResultSet consultaSql(String consulta)
+    public static ResultSet consultaSql(String consulta, String name_table)
     {
         //Creo conexino a la base de datos
-        //Connection con = getConexion();
         try {
-            //Obtengo el resultado del a consulta 
-            
+            //Obtengo el resultado del a consulta
             declara = contacto.createStatement();
             respuesta = declara.executeQuery(consulta);
-            
-            //declara2 = contacto.prepareStatement(consulta);
-            //respuesta = declara2.executeQuery();
-            
+
             return respuesta;
         } catch (SQLException e) {
             //1-)Primera validación: la tabla debe existir
-            JOptionPane.showMessageDialog(null, "ERROR: NO EXISTE LA TABLA "+e.getMessage(),"warnning",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ERROR: NO EXISTE LA TABLA -> "+name_table+"\n"+e.getMessage(),"warnning",JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
@@ -133,7 +125,7 @@ public class Conexion
      * @param sqlInsertF
      * @return el dato resultset que tiene la vista de la tabla
      */
-    public static ResultSet consultaSqlCreate(String sqlQuery, String sqlInsert, String sqlInsertF)
+    public static ResultSet consultaSqlCreate(String sqlQuery, String sqlInsert, String sqlInsertF, String name_table)
     {
         //Creo conexino a la base de datos
         //Connection con = getConexion();
@@ -150,11 +142,28 @@ public class Conexion
             return respuesta;
         } catch (SQLException e) {
             //1-)Primera validación: la tabla debe existir
-            JOptionPane.showMessageDialog(null, "ERROR: NO EXISTE LA TABLA "+e.getMessage(),"warnning",JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "ERROR: NO EXISTE LA TABLA -> "+name_table+"\n"+e.getMessage(),"warnning",JOptionPane.ERROR_MESSAGE);
         }
         return null;
     }
 
+    public static ResultSet consultaSql2(String consulta)
+    {
+        //Creo conexino a la base de datos
+        try {
+            //Obtengo el resultado del a consulta 
+            declara = contacto.createStatement();
+            respuesta = declara.executeQuery(consulta);
+           
+            return respuesta;
+        } catch (SQLException e) {
+            //1-)Primera validación: la tabla debe existir
+            JOptionPane.showMessageDialog(null, "ERROR: NO EXISTE LA TABLA "+e.getMessage(),"warnning",JOptionPane.ERROR_MESSAGE);
+        }
+        return null;
+    }
+    
+    
     /**
      * ########################################################################
      * Procedimientos
