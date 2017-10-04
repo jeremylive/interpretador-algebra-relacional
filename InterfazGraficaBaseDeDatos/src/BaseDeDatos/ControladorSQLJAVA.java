@@ -585,6 +585,41 @@ public class ControladorSQLJAVA
     {
         return 0;
     }
+    /**
+     * Renombrar atributos
+     */
+    public int cargarTablaRenomR(String name_tablaInput, String name_atributos, String name_tablaOutput)
+    {
+        return 0;
+    }
+    /**
+     * concatenacion join
+     */
+    public int cargarTablaConcaJoin(String name_tablaInput, String name_tablaInput2, String predicado, String name_tablaOutput)
+    {
+        return 0;
+    }
+    /**
+     * natural join
+     */
+    public int cargarTablaNaturalJoin(String name_tablaInput, String name_tablaInput2, String name_tablaOutput)
+    {
+        return 0;
+    }
+    /**
+     * agregacion
+     */
+    public int cargarTablaAgregacion(String name_TablaInput, String oper_agre, String name_TablaOutput)
+    {
+        return 0;
+    }
+    /**
+     * agrupacion
+     */
+    public int cargarTablaAgrupacion(String name_TablaInput, String name_atri, String oper_agre, String name_TablaOutput)
+    {
+        return 0;
+    }
     
     /**
      * Función que imprime todas las tablas temporales
@@ -823,6 +858,137 @@ public class ControladorSQLJAVA
             }
         }        
     }
+    /**
+     * Funcion interseccion
+     */
+    public void ejecRenomR()
+    {
+        //Verifica si la informacion esta digitada
+        if(getRegister().getInput1().isEmpty() || getRegister().getNombreA().isEmpty() || getRegister().getOutput().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, TABLA INPUT 2 y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
+            getRegister().cleanText();
+        } else {
+            //Caso cuando no colocá el nombre de la TABLA OUTPUT
+            if(getRegister().getOutput().isEmpty()){
+                getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getNombreA()+")");
+                getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
+            //Caso en que si digita toda la informacion
+            }else{
+                if(!isExistsTableOut(getRegister().getOutput())){
+                    getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getInput2()+")");
+                    getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                    cargarTablaRenomR(getRegister().getInput1(), getRegister().getNombreA(), getRegister().getOutput());
+                }
+            }
+        } 
+    }
+    /**
+     * concatenacion join
+     */
+    public void ejecConcaJoin()
+    {
+        //Verifica si la informacion esta digitada
+        if(getRegister().getInput1().isEmpty() || getRegister().getNombreA().isEmpty() || getRegister().getOutput().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, TABLA INPUT 2 y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
+            getRegister().cleanText();
+        } else {
+            //Caso cuando no colocá el nombre de la TABLA OUTPUT
+            if(getRegister().getOutput().isEmpty()){
+                getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getNombreA()+")");
+                getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
+            //Caso en que si digita toda la informacion
+            }else{
+                if(!isExistsTableOut(getRegister().getOutput())){
+                    getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getInput2()+")");
+                    getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                    cargarTablaConcaJoin(getRegister().getInput1(), getRegister().getInput2(), getRegister().getPredicado(), getRegister().getOutput());
+                }
+            }
+        }
+    }
+    /**
+     * Funcion natural join
+     */
+    public void ejecNaturalJoin()
+    {
+        //Verifica si la informacion esta digitada
+        if(getRegister().getInput1().isEmpty() || getRegister().getNombreA().isEmpty() || getRegister().getOutput().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, TABLA INPUT 2 y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
+            getRegister().cleanText();
+        } else {
+            //Caso cuando no colocá el nombre de la TABLA OUTPUT
+            if(getRegister().getOutput().isEmpty()){
+                getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getNombreA()+")");
+                getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
+            //Caso en que si digita toda la informacion
+            }else{
+                if(!isExistsTableOut(getRegister().getOutput())){
+                    getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getInput2()+")");
+                    getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                    cargarTablaNaturalJoin(getRegister().getInput1(), getRegister().getInput2(), getRegister().getOutput());
+                }
+            }
+        }        
+    }
+    /**
+     * Funcion agragacion
+     */
+    public void ejecAgregacion()
+    {
+        //Verifica si la informacion esta digitada
+        if(getRegister().getInput1().isEmpty() || getRegister().getNombreA().isEmpty() || getRegister().getOutput().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, TABLA INPUT 2 y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
+            getRegister().cleanText();
+        } else {
+            //Caso cuando no colocá el nombre de la TABLA OUTPUT
+            if(getRegister().getOutput().isEmpty()){
+                getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getNombreA()+")");
+                getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
+            //Caso en que si digita toda la informacion
+            }else{
+                if(!isExistsTableOut(getRegister().getOutput())){
+                    getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getInput2()+")");
+                    getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                    cargarTablaAgregacion(getRegister().getInput1(), getRegister().getOperAgre(), getRegister().getOutput());
+                }
+            }
+        }
+    }
+    /**
+     * Funcion agrupacion
+     */
+    public void ejecAgrupacion()
+    {
+        //Verifica si la informacion esta digitada
+        if(getRegister().getInput1().isEmpty() || getRegister().getNombreA().isEmpty() || getRegister().getOutput().isEmpty())
+        {
+            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, TABLA INPUT 2 y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
+            getRegister().cleanText();
+        } else {
+            //Caso cuando no colocá el nombre de la TABLA OUTPUT
+            if(getRegister().getOutput().isEmpty()){
+                getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getNombreA()+")");
+                getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
+            //Caso en que si digita toda la informacion
+            }else{
+                if(!isExistsTableOut(getRegister().getOutput())){
+                    getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getInput2()+")");
+                    getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                    cargarTablaAgrupacion(getRegister().getInput1(), getRegister().getNombreA(), getRegister().getOperAgre(), getRegister().getOutput());
+                }
+            }
+        }
+    }
+    
     
     /**
      * Función que imprime el output en modelo relacional
@@ -854,25 +1020,31 @@ public class ControladorSQLJAVA
                 break;
                 
             case "Intersección":
+                ejecIntersec();
                 break;
 
             case "División":
+                ejecDiv();
                 break;
 
             case "Renombrar una relación y sus atributos":
-
+                ejecRenomR();
                 break;
 
             case "Concatenación":
+                ejecConcaJoin();
                 break;
 
             case "Concatenación natural":
+                ejecNaturalJoin();
                 break;
 
             case "Agregación":
+                ejecAgregacion();
                 break;
 
             case "Agrupación":
+                
                 break;
 
             default:
