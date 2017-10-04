@@ -8,9 +8,13 @@ import javax.swing.JOptionPane;
  */
 public class DbaInterfaz extends javax.swing.JFrame 
 {
+    //Variables globales
+    private Register interfaz3;
+    private String operator;
     //Constructor
     public DbaInterfaz() {
         initComponents();
+        interfaz3 = new Register(this);
     }
     /**
      * FUNCIONES..............................
@@ -133,8 +137,7 @@ public class DbaInterfaz extends javax.swing.JFrame
 
     private void ejecutarOperActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarOperActionPerformed
         
-        Register interfaz3 = new Register(this);
-        String operator = operacion.getSelectedItem().toString();
+        operator = operacion.getSelectedItem().toString();
         
         interfaz3.getAlgebra().setEditable(false);
         interfaz3.getSql().setEditable(false);
@@ -231,7 +234,6 @@ public class DbaInterfaz extends javax.swing.JFrame
         
         interfaz3.setLocationRelativeTo(null);
         interfaz3.setVisible(true);
-        //interfaz2.cargarTabla();
         
     }//GEN-LAST:event_ejecutarOperActionPerformed
 

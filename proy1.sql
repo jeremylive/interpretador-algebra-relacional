@@ -26,7 +26,15 @@ GO
 --Creo esquema
 CREATE SCHEMA proy1 authorization dbaproy1
 GO
-
+--
+CREATE TABLE proy1.cliente2
+	(
+	nombre_cliente	char(20),
+	calle_cliente	char(20),
+	ciudad_cliente	char(20),
+	primary key(nombre_cliente)
+	)
+GO
 --Se debe de crear la bases de datos(Banco) en el esquema
 CREATE TABLE proy1.cliente
 	(
@@ -74,6 +82,9 @@ CREATE TABLE proy1.préstamo
 	primary	key(número_préstamo)
 	)
 GO
+----
+INSERT INTO proy1.cliente2(nombre_cliente, calle_cliente, ciudad_cliente)
+VALUES('Jeremy','007','tokyo'),('Jose','1996','CR'),('Abi','11','LP')
 --Inserto los datos en la base de datos
 INSERT INTO proy1.cliente(nombre_cliente, calle_cliente, ciudad_cliente)
 VALUES('Abril','Preciados','Valsaín'),('Amo','Embajadores','Arganzuela'),('Badorrey','Delicias','Valsaín'),('Fernández','Jasmín','León'),

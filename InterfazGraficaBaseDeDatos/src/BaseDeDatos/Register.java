@@ -39,7 +39,6 @@ public class Register extends javax.swing.JFrame
     {
         initComponents();
         this.control = new ControladorSQLJAVA(this);
-        this.tabla_input2.setEditable(false);
         this.interfaz_operacion = oper;
     }
     /**
@@ -164,9 +163,18 @@ public class Register extends javax.swing.JFrame
         tabla_input1.setText("");
         predicado.setText("");
         tabla_result.setText("");
+        expres.setText("");
+        tabla_input2.setText("");
+        nombre_atributos.setText("");
+        oper_agre.setText("");      
+        
         tabla_input1.requestFocus();
         predicado.requestFocus();
         tabla_result.requestFocus();
+        expres.requestFocus();
+        tabla_input2.requestFocus();
+        nombre_atributos.requestFocus();
+        oper_agre.requestFocus();
     }
     
     
@@ -700,7 +708,8 @@ public class Register extends javax.swing.JFrame
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         //Elimino todas las tablas temporales
         //Salgo de la aplcación
-        dispose();
+        //dispose();
+        this.setVisible(false);
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     /**
