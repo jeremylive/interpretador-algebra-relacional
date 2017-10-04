@@ -273,7 +273,6 @@ public class ControladorSQLJAVA
             }         
             
             //Datos a utilizar
-            System.out.println("--------------"+sqlQuery3);
             sqlQuery += name_tablaOutput + " "+ sqlQuery2 + ")";                                                      //Create
             insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + gene_aux+ ") " 
                     +"SELECT "+gene_aux+" FROM proy1."+name_tablaInput;               //Select
@@ -337,11 +336,10 @@ public class ControladorSQLJAVA
             index2 = metaDatos2.getColumnCount();
             
             String atri1,atri2;
-            //System.out.println("///"+index+"  "+index2);
             if(index == index2)
             {
-                JOptionPane.showMessageDialog(null, "La aridad de estas dos tablas coincide.. son de aridad = "+index);
-
+                JOptionPane.showMessageDialog(null, "La aridad de estas dos tablas coinciden Y son de ARIDAD = "+index);
+                
                 for(int i=1; i<=index; i++)
                 {
                     atri1 = metaDatos.getColumnName(i);
@@ -360,14 +358,10 @@ public class ControladorSQLJAVA
                 return 1;
             }
             
-            //----U
-            output = Conexion.consultaSql("SELECT * FROM proy1."+name_tablaInput, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
-            metaDatos = output.getMetaData();   //Obtengo el total de columnas que tiene la tabla
-            index = metaDatos.getColumnCount();
-            
             //Recorro la tabla y obtengo el nombre de las columnas
             for (int i = 1; i <= index; i++) {
               if (i == index){
+                sqlQuery3 += metaDatos.getColumnName(i);
                 sqlQuery2 += metaDatos.getColumnName(i) 
                      + " "
                      + metaDatos.getColumnTypeName(i)
@@ -376,6 +370,7 @@ public class ControladorSQLJAVA
                 String columnName = metaDatos.getColumnName(i);
                 System.out.print(columnName);
               }else{
+                sqlQuery3 += metaDatos.getColumnName(i)+ ", ";
                 sqlQuery2 += metaDatos.getColumnName(i) 
                      + " "
                      + metaDatos.getColumnTypeName(i)
@@ -402,13 +397,12 @@ public class ControladorSQLJAVA
               }
               System.out.println("");  
             }         
-            
             //Datos a utilizar
             sqlQuery += name_tablaOutput + " " + sqlQuery2 + ")";                                                      //Create
-            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") "          //Insert
-                    +"SELECT * FROM proy1."+name_tablaInput+" UNION "+"SELECT * FROM proy1."+name_tablaInput2; ;               //Select
+            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") "        
+                    +"SELECT * FROM proy1."+name_tablaInput+" UNION "+"SELECT * FROM proy1."+name_tablaInput2;         //Select
             selectTemp = "SELECT * FROM proy1.#"+name_tablaOutput;
-            
+            System.out.println("\n"+insertTemp+"\n"+sqlQuery3);
             //-----Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
             output = Conexion.consultaSqlCreate(sqlQuery, insertTemp, selectTemp, name_tablaInput);          //Lo accede el usuario usproy1
             metaDatos = output.getMetaData();
@@ -459,13 +453,12 @@ public class ControladorSQLJAVA
             int index2 = 0;
             index2 = metaDatos2.getColumnCount();
             
-            String atri1="";
-            String atri2="";
+            //String atri1, atri2;
             //System.out.println("///"+index+"  "+index2);
             if(index == index2)
             {
-                JOptionPane.showMessageDialog(null, "La aridad de estas dos tablas coincide.. es de aridad = "+index);
-           
+                JOptionPane.showMessageDialog(null, "La aridad de estas dos tablas coinciden Y son de ARIDAD = "+index);
+                /*
                 for(int i=1; i<=index; i++)
                 {
                     atri1 = metaDatos.getColumnName(i);
@@ -477,6 +470,7 @@ public class ControladorSQLJAVA
                         return 1;
                     }
                 }
+                */
                 
             }else
             {
@@ -492,6 +486,7 @@ public class ControladorSQLJAVA
             //Recorro la tabla y obtengo el nombre de las columnas
             for (int i = 1; i <= index; i++) {
               if (i == index){
+                sqlQuery3 += metaDatos.getColumnName(i);
                 sqlQuery2 += metaDatos.getColumnName(i) 
                      + " "
                      + metaDatos.getColumnTypeName(i)
@@ -500,6 +495,7 @@ public class ControladorSQLJAVA
                 String columnName = metaDatos.getColumnName(i);
                 System.out.print(columnName);
               }else{
+                sqlQuery3 += metaDatos.getColumnName(i)+ ", ";
                 sqlQuery2 += metaDatos.getColumnName(i) 
                      + " "
                      + metaDatos.getColumnTypeName(i)
@@ -526,13 +522,25 @@ public class ControladorSQLJAVA
               }
               System.out.println("");  
             }         
-            
+            //Obtengo la llave principal
+            String primary_key="";
+            int x=0;
+            for (x=0;x<sqlQuery.length();x++){
+                if(sqlQuery3.charAt(x) == ','){
+                    x = sqlQuery.length();
+                    
+                }else{
+                    primary_key += sqlQuery3.charAt(x);
+                }
+            }
             //Datos a utilizar
-            sqlQuery += name_tablaOutput + " " + sqlQuery2 + ")";                                                      //Create
-            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") "          //Insert
-                    +"SELECT * FROM proy1."+name_tablaInput+" WHERE NOT EXIST "+"SELECT * FROM proy1."+name_tablaInput2; ;               //Select
+            sqlQuery += name_tablaOutput + " " + sqlQuery2 + ")";                 //Create
+            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") "          
+                    +"SELECT * FROM proy1."+name_tablaInput+" WHERE NOT EXISTS "+"(SELECT * FROM proy1."+name_tablaInput2
+                    +" WHERE proy1."+name_tablaInput+"."+primary_key+" = proy1."+name_tablaInput2+"."+primary_key
+                    +")";                                                         //Select
             selectTemp = "SELECT * FROM proy1.#"+name_tablaOutput;
-            
+            System.out.println("\n"+insertTemp+"\n"+sqlQuery3);
             //-----Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
             output = Conexion.consultaSqlCreate(sqlQuery, insertTemp, selectTemp, name_tablaInput);          //Lo accede el usuario usproy1
             metaDatos = output.getMetaData();
@@ -716,13 +724,13 @@ public class ControladorSQLJAVA
             //Caso cuando no colocá el nombre de la TABLA OUTPUT
             if(getRegister().getOutput().isEmpty()){
                 getRegister().setAlgebraR(getRegister().getOutput()+" <- π "+getRegister().getExpress()+"("+getRegister().getInput1()+")");
-                getRegister().setSql("SELECT DISTINCT "+getRegister().getExpress()+" FROM "+getRegister().getInput1());
+                getRegister().setSql("SELECT DISTINCT * "+getRegister().getExpress()+" FROM "+getRegister().getInput1());
                 JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
             //Caso en que si digita toda la informacion
             }else{
                 if(!isExistsTableOut(getRegister().getOutput())){
                     getRegister().setAlgebraR(getRegister().getOutput()+" <- π "+getRegister().getExpress()+"("+getRegister().getInput1()+")");
-                    getRegister().setSql("SELECT DISTINCT "+getRegister().getExpress()+" FROM "+getRegister().getInput1());
+                    getRegister().setSql("SELECT DISTINCT * "+getRegister().getExpress()+" FROM "+getRegister().getInput1());
                     cargarTablaGene(getRegister().getInput1(), getRegister().getExpress(), getRegister().getOutput());
                 }
             }
@@ -1044,16 +1052,13 @@ public class ControladorSQLJAVA
                 break;
 
             case "Agrupación":
-                
+                ejecAgrupacion();
                 break;
 
             default:
                 break;
         };
-
-
-        getRegister().cleanText();
-        JOptionPane.showMessageDialog(null, "The date was successfully correctly");
+        //getRegister().cleanText();
     }
 //Fin del programa controlador del interprete de algebra SQL/JAVA
 }

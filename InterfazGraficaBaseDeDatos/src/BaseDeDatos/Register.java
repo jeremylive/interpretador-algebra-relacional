@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -44,7 +45,35 @@ public class Register extends javax.swing.JFrame
     /**
      * Funciones get and set
      */
-    
+    //obtengo jlabel
+    public JLabel jltabla1()
+    {
+        return input2;
+    }
+    public JLabel jltabla2()
+    {
+        return input2;
+    }
+    public JLabel jlout()
+    {
+        return outputRelt;
+    }
+    public JLabel jlPre()
+    {
+        return pre;
+    }
+    public JLabel jlNameA()
+    {
+        return nameAtri;
+    }
+    public JLabel jlOper()
+    {
+        return OperAgre;
+    }
+    public JLabel jlExpres()
+    {
+        return expree;
+    }
     //obtengo tabla input 1
     public String getInput1()
     {
@@ -167,7 +196,7 @@ public class Register extends javax.swing.JFrame
         tabla_input2.setText("");
         nombre_atributos.setText("");
         oper_agre.setText("");      
-        
+        /*
         tabla_input1.requestFocus();
         predicado.requestFocus();
         tabla_result.requestFocus();
@@ -175,6 +204,7 @@ public class Register extends javax.swing.JFrame
         tabla_input2.requestFocus();
         nombre_atributos.requestFocus();
         oper_agre.requestFocus();
+        */
     }
     
     
@@ -201,19 +231,19 @@ public class Register extends javax.swing.JFrame
         jToggleButton1 = new javax.swing.JToggleButton();
         jToggleButton2 = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        pre = new javax.swing.JLabel();
+        outputRelt = new javax.swing.JLabel();
+        input2 = new javax.swing.JLabel();
+        nameAtri = new javax.swing.JLabel();
         nombre_atributos = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
+        OperAgre = new javax.swing.JLabel();
         oper_agre = new javax.swing.JTextField();
         predicado = new javax.swing.JTextField();
         signos = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        jLabel10 = new javax.swing.JLabel();
+        expree = new javax.swing.JLabel();
         expres = new javax.swing.JTextField();
         tabla_input2 = new javax.swing.JTextField();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -298,15 +328,15 @@ public class Register extends javax.swing.JFrame
 
         jLabel1.setText("Tabla Input 1");
 
-        jLabel2.setText("Predicado");
+        pre.setText("Predicado");
 
-        jLabel3.setText("Tabla Resultante");
+        outputRelt.setText("Tabla Resultante");
 
-        jLabel7.setText("Tabla Input 2");
+        input2.setText("Tabla Input 2");
 
-        jLabel8.setText("Nombre atributos");
+        nameAtri.setText("Nombre atributos");
 
-        jLabel9.setText("Operaciones agregación");
+        OperAgre.setText("Operaciones agregación");
 
         oper_agre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -340,7 +370,7 @@ public class Register extends javax.swing.JFrame
         jButton4.setFont(new java.awt.Font("Yu Gothic", 0, 14)); // NOI18N
         jButton4.setText("Ver referencia cruzada / tablas");
 
-        jLabel10.setText("Expresión de la proyeción generalizada");
+        expree.setText("Expresión de la proyeción generalizada");
 
         expres.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -449,29 +479,29 @@ public class Register extends javax.swing.JFrame
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel10))
+                                    .addComponent(nameAtri)
+                                    .addComponent(expree))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(nombre_atributos)
                                     .addComponent(expres, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel9)
+                                .addComponent(OperAgre)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(signos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(oper_agre, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel3))
+                                    .addComponent(pre)
+                                    .addComponent(outputRelt))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(tabla_result, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(predicado, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel7)
+                                    .addComponent(input2)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                     .addComponent(tabla_input2))
                                 .addGroup(layout.createSequentialGroup()
@@ -503,27 +533,27 @@ public class Register extends javax.swing.JFrame
                             .addComponent(jLabel1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7)
+                            .addComponent(input2)
                             .addComponent(tabla_input2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(tabla_result, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
+                            .addComponent(outputRelt))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
+                            .addComponent(pre)
                             .addComponent(predicado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(expres, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10))
+                            .addComponent(expree))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(nombre_atributos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8))
+                            .addComponent(nameAtri))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9)
+                            .addComponent(OperAgre)
                             .addComponent(oper_agre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(signos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -775,21 +805,18 @@ public class Register extends javax.swing.JFrame
      * -------------------------------------------------------------------------
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel OperAgre;
     private javax.swing.JTextField algebra_relacional;
+    private javax.swing.JLabel expree;
     private javax.swing.JTextField expres;
+    private javax.swing.JLabel input2;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -807,8 +834,11 @@ public class Register extends javax.swing.JFrame
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JToggleButton jToggleButton2;
+    private javax.swing.JLabel nameAtri;
     private javax.swing.JTextField nombre_atributos;
     private javax.swing.JTextField oper_agre;
+    private javax.swing.JLabel outputRelt;
+    private javax.swing.JLabel pre;
     private javax.swing.JTextField predicado;
     private javax.swing.JTextField signos;
     private javax.swing.JTextField sql;

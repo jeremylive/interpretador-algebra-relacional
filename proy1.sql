@@ -3,6 +3,9 @@
 --Creo login administrador
 CREATE LOGIN loglive
 WITH PASSWORD='111'
+--
+CREATE LOGIN loglive2
+WITH PASSWORD='222'
 
 --Creo la base de datos
 CREATE DATABASE bdproy1
@@ -19,8 +22,10 @@ GRANT CREATE PROC, EXECUTE, CREATE TABLE, CREATE ROLE, SELECT, INSERT, UPDATE, D
 GO
 --Creo usuario usproy1
 CREATE USER usproy1
+FOR LOGIN loglive2
+drop usproy1
 --Tiene lectura para los datos de las tablas permanentes y CRUD para las tablas temporales
---GRANT SELECT TO usproy1
+GRANT SELECT TO usproy1
 GO
 
 --Creo esquema

@@ -147,84 +147,218 @@ public class DbaInterfaz extends javax.swing.JFrame
         
         switch(operator){
             case "Selección":
-                interfaz3.getTabla2().setEditable(false);
-                interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);
-                interfaz3.getExpres().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getTabla2().setVisible(false);
+                interfaz3.getNombreAField().setVisible(false);
+                interfaz3.getOperAgreField().setVisible(false);
+                interfaz3.getExpres().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jlPre().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jlExpres().setVisible(false);
+                interfaz3.jlNameA().setVisible(false);
+                interfaz3.jlOper().setVisible(false);
+                interfaz3.jltabla2().setVisible(false);
                 break;
 
             case "Proyección Generalizada":
-                interfaz3.getTabla2().setEditable(false);
-                interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);
-                interfaz3.getPredicadoField().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getExpres().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getTabla2().setVisible(false);
+                interfaz3.getNombreAField().setVisible(false);
+                interfaz3.getOperAgreField().setVisible(false);
+                interfaz3.getPredicadoField().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jlExpres().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jlPre().setVisible(false);
+                interfaz3.jlNameA().setVisible(false);
+                interfaz3.jlOper().setVisible(false);
+                interfaz3.jltabla2().setVisible(false);
                 break;
             case "Unión":
-                interfaz3.getTabla2().setEditable(true);
-                interfaz3.getPredicadoField().setEditable(false);
-                interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);
-                interfaz3.getExpres().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getTabla2().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(false);
+                interfaz3.getNombreAField().setVisible(false);
+                interfaz3.getOperAgreField().setVisible(false);
+                interfaz3.getExpres().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jltabla2().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jlPre().setVisible(false);
+                interfaz3.jlExpres().setVisible(false);
+                interfaz3.jlNameA().setVisible(false);
+                interfaz3.jlOper().setVisible(false);
                 break;
 
             case "Diferencia de conjuntos":
-                interfaz3.getPredicadoField().setEditable(false);
-                interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);    
-                interfaz3.getExpres().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getTabla2().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(false);
+                interfaz3.getNombreAField().setVisible(false);
+                interfaz3.getOperAgreField().setVisible(false);    
+                interfaz3.getExpres().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jltabla2().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jlPre().setVisible(false);
+                interfaz3.jlExpres().setVisible(false);
+                interfaz3.jlNameA().setVisible(false);
+                interfaz3.jlOper().setVisible(false);
                 break;
 
             case "Producto Cartesiano":
-                interfaz3.getPredicadoField().setEditable(false);
-                interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);    
-                interfaz3.getExpres().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getTabla2().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(false);
+                interfaz3.getNombreAField().setVisible(false);
+                interfaz3.getOperAgreField().setVisible(false);    
+                interfaz3.getExpres().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jltabla2().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jlPre().setVisible(false);
+                interfaz3.jlExpres().setVisible(false);
+                interfaz3.jlNameA().setVisible(false);
+                interfaz3.jlOper().setVisible(false);
                 break;
 
             case "Intersección":
-                interfaz3.getPredicadoField().setEditable(false);
-                interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);  
-                interfaz3.getExpres().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getTabla2().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(false);
+                interfaz3.getNombreAField().setVisible(false);
+                interfaz3.getOperAgreField().setVisible(false);  
+                interfaz3.getExpres().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jltabla2().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jlPre().setVisible(false);
+                interfaz3.jlExpres().setVisible(false);
+                interfaz3.jlNameA().setVisible(false);
+                interfaz3.jlOper().setVisible(false);
                 break;
 
             case "División":
-                interfaz3.getPredicadoField().setEditable(false);
-                interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);    
-                interfaz3.getExpres().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getTabla2().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(false);
+                interfaz3.getNombreAField().setVisible(false);
+                interfaz3.getOperAgreField().setVisible(false);    
+                interfaz3.getExpres().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jltabla2().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jlPre().setVisible(false);
+                interfaz3.jlExpres().setVisible(false);
+                interfaz3.jlNameA().setVisible(false);
+                interfaz3.jlOper().setVisible(false);
                 break;
 
             case "Renombrar una relación y sus atributos":
-                interfaz3.getPredicadoField().setEditable(false);
-                interfaz3.getTabla2().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);    
-                interfaz3.getExpres().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getNombreAField().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(false);
+                interfaz3.getTabla2().setVisible(false);
+                interfaz3.getOperAgreField().setVisible(false);    
+                interfaz3.getExpres().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jlNameA().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jlPre().setVisible(false);
+                interfaz3.jlExpres().setVisible(false);
+                interfaz3.jlOper().setVisible(false);
+                interfaz3.jltabla2().setVisible(false);
                 break;
 
             case "Concatenación":
-                interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);    
-                interfaz3.getExpres().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getTabla2().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getNombreAField().setVisible(false);
+                interfaz3.getOperAgreField().setVisible(false);    
+                interfaz3.getExpres().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jltabla2().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jlPre().setVisible(true);
+                interfaz3.jlExpres().setVisible(false);
+                interfaz3.jlNameA().setVisible(false);
+                interfaz3.jlOper().setVisible(false);
                 break;
 
             case "Concatenación natural":
-                interfaz3.getPredicadoField().setEditable(false);
-                interfaz3.getNombreAField().setEditable(false);
-                interfaz3.getTabla2().setEditable(false);    
-                interfaz3.getExpres().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getTabla2().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(false);
+                interfaz3.getNombreAField().setVisible(false);
+                interfaz3.getTabla2().setVisible(false);    
+                interfaz3.getExpres().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jltabla2().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jlPre().setVisible(false);
+                interfaz3.jlExpres().setVisible(false);
+                interfaz3.jlNameA().setVisible(false);
+                interfaz3.jlOper().setVisible(false);
                 break;
 
             case "Agregación":
-                interfaz3.getPredicadoField().setEditable(false);
-                interfaz3.getTabla2().setEditable(false);
-                interfaz3.getOperAgreField().setEditable(false);    
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getOperAgreField().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(false);
+                interfaz3.getTabla2().setVisible(false);
+                interfaz3.getOperAgreField().setVisible(false);    
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jlOper().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jltabla2().setVisible(false);
+                interfaz3.jlPre().setVisible(false);
+                interfaz3.jlExpres().setVisible(false);
+                interfaz3.jlNameA().setVisible(false);
+                
                 break;
 
             case "Agrupación":
-                interfaz3.getPredicadoField().setEditable(false);
-                interfaz3.getTabla2().setEditable(false);  
-                interfaz3.getExpres().setEditable(false);
+                interfaz3.getTabla1().setVisible(true);
+                interfaz3.getNombreAField().setVisible(true);
+                interfaz3.getOperAgreField().setVisible(true);
+                interfaz3.getTablaOut().setVisible(true);
+                interfaz3.getPredicadoField().setVisible(false);
+                interfaz3.getTabla2().setVisible(false);  
+                interfaz3.getExpres().setVisible(false);
+                
+                interfaz3.jltabla1().setVisible(true);
+                interfaz3.jlNameA().setVisible(true);
+                interfaz3.jlOper().setVisible(true);
+                interfaz3.jlout().setVisible(true);
+                interfaz3.jltabla2().setVisible(false);
+                interfaz3.jlPre().setVisible(false);
+                interfaz3.jlExpres().setVisible(false);
                 break;
                 
             default:
