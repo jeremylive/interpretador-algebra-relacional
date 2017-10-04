@@ -62,14 +62,18 @@ public class ControladorSQLJAVA
     //
     public String getTemp(int cont)
     {
-        return this.name_all_temp[cont];
+        String x = name_all_temp[cont];
+        return x;
     }
     //
     public void restartQuerys()
     {
-        sqlQuery = "CREATE TABLE proy1.#";  //Tabla temporal
-        sqlQuery2 = "(";                    //atributos con tipo
+        sqlQuery = "";  //Tabla temporal
+        sqlQuery2 = "";                    //atributos con tipo
         sqlQuery3 = "";                     //atributos
+        
+        sqlQuery = "CREATE TABLE proy1.#";  
+        sqlQuery2 = "(";                    
     }
     //
     public String getQuery1()
@@ -159,6 +163,7 @@ public class ControladorSQLJAVA
                 }
             }
             //Datos a utilizar
+            System.out.println(sqlQuery3);
             sqlQuery += name_tablaOutput + " ";
             sqlQuery = sqlQuery + sqlQuery2 + ")";                                                      //Create
             insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") "          //Insert
@@ -185,10 +190,12 @@ public class ControladorSQLJAVA
             getRegister().setTablaModel(modelo);    //Agrego datos a la tabla
             setTemp(name_tablaOutput, cont);        //Aumento contador de nombre de la tabla temporal
             this.cont++;
+            
             /*
             System.out.println(sqlQuery + "\n" + sqlQuery2 + "\n" + sqlQuery3);
             System.out.println("\n" + insertTemp + "\n" + selectTemp);
             System.out.println("\n ....."+name_tablaOutput);
+            
             System.out.println("nameTempe "+getTemp(cont-1));
             */
         } catch (SQLException e) {
@@ -200,7 +207,7 @@ public class ControladorSQLJAVA
      */
     public void cargarTablaGene(String name_tablaInput, String gene_aux, String name_tablaOutput)
     {
-        
+        System.out.println(name_tablaInput+"\n"+gene_aux+"\n"+name_tablaOutput);
         restartQuerys();    //Obtengo esqueleto de datos a utilizar en los query
         DefaultTableModel modelo = getRegister().getTablaModel();   //Obtengo la tabla de la Base de datos para poder agregarla
         modelo.setRowCount(0);
@@ -210,38 +217,36 @@ public class ControladorSQLJAVA
             metaDatos = output.getMetaData();   //Obtengo el total de columnas que tiene la tabla
             index = metaDatos.getColumnCount();
             
-            while(output.next())    //Obtengo datos de la tabla input
-            {
-                for(int i=1; i<=index; i++)
-                {
-                    if(i == index)
-                    {
-                        sqlQuery3 += metaDatos.getColumnName(i);
-                        sqlQuery2 += metaDatos.getColumnName(i) 
-                           + " "
-                           + metaDatos.getColumnTypeName(i)
-                           + "(" + Integer.toString(metaDatos.getPrecision(i))
-                           + ")";
-                    }else
-                    {   
-                        sqlQuery3 += metaDatos.getColumnName(i) + ", ";
-                        sqlQuery2 += metaDatos.getColumnName(i) 
-                            + " "
-                            + metaDatos.getColumnTypeName(i)
-                            + "(" + Integer.toString(metaDatos.getPrecision(i))
-                            + ")"
-                            + ", ";
-                    }
-                }
+            //Recorro la tabla y obtengo el nombre de las columnas
+            for (int i = 1; i <= index; i++) {
+              if (i > 1){
+                  System.out.print(",  ");
+              }
+              String columnName = metaDatos.getColumnName(i);
+              System.out.print(columnName);
             }
+            System.out.println("");
+            
+            //Recorro la tabla y obtengo el valor del atributo
+            while (output.next()) {
+              for (int i = 1; i <= index; i++) {
+                if (i > 1){
+                    System.out.print(",  ");
+                }
+                String columnValue = output.getString(i);
+                System.out.print(columnValue);
+              }
+              System.out.println("");  
+            }         
+            
             //Datos a utilizar
             System.out.println(sqlQuery3);
             sqlQuery += name_tablaOutput + " ";
             sqlQuery = sqlQuery + sqlQuery2 + ")";                                                      //Create
-            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + gene_aux+ ") "          //Insert
+            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + gene_aux+ ") " 
                     +"SELECT "+gene_aux+" FROM proy1."+name_tablaInput;               //Select
             selectTemp = "SELECT * FROM proy1.#"+name_tablaOutput;
-            
+         
             //-----Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
             output = Conexion.consultaSqlCreate(sqlQuery, insertTemp, selectTemp, name_tablaInput);          //Lo accede el usuario usproy1
             metaDatos = output.getMetaData();
@@ -262,11 +267,14 @@ public class ControladorSQLJAVA
             getRegister().setTablaModel(modelo);    //Agrego datos a la tabla
             setTemp(name_tablaOutput, cont);        //Aumento contador de nombre de la tabla temporal
             this.cont++;
-            
+            /*
             System.out.println(sqlQuery + "\n" + sqlQuery2 + "\n" + sqlQuery3);
             System.out.println("\n" + insertTemp + "\n" + selectTemp);
             System.out.println("\n ....."+name_tablaOutput);
+            
             System.out.println("nameTempe "+getTemp(cont-1));
+            */
+
             
         } catch (SQLException e) {
             System.out.println(e.getMessage());
