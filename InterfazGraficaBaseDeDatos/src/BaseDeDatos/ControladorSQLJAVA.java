@@ -715,11 +715,13 @@ public class ControladorSQLJAVA
                     }
                 }
             }
-            
+            //
+            String atributos=convertToAtri(sqlQuery3, name_tablaInput, index); 
+            System.out.println("------ "+atributos);
             //Datos a utilizar
             sqlQuery += name_tablaOutput + " " + sqlQuery2 + ")";                                        //Create
             insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") "                //Insert
-                    +"SELECT DISTINCT proy1.cliente.nombre_cliente, proy1.cliente.calle_cliente, proy1.cliente.ciudad_cliente FROM proy1."+name_tablaInput+" LEFT JOIN "+" proy1."+name_tablaInput2
+                    +"SELECT DISTINCT "+atributos+" FROM proy1."+name_tablaInput+" LEFT JOIN "+" proy1."+name_tablaInput2
                     +" ON proy1."+name_tablaInput+"."+primary_key0+" = proy1."+name_tablaInput2+"."+primary_key0
                     +" WHERE proy1."+name_tablaInput+"."+primary_key0+" IS NOT NULL";                                 //Select
             selectTemp = "SELECT * FROM proy1.#"+name_tablaOutput;
@@ -788,6 +790,23 @@ public class ControladorSQLJAVA
         return 0;
     }
     
+    /**
+     * Funcion retorno string con atributos proy1.tabla 
+     */
+    public String convertToAtri(String atris, String tabla1, int largo)
+    {
+        String result = "";
+        String[] atributos = atris.split(", ");
+        for (int i = 0; i < largo; i++) {
+            if(i+1 == largo){
+                 result += "proy1."+tabla1+"."+atributos[i];
+            }else{
+                 result += "proy1."+tabla1+"."+atributos[i]+", ";   
+            }
+        }
+        return result;
+    }
+   
     /**
      * Función que imprime todas las tablas temporales
      */
@@ -1221,6 +1240,39 @@ public class ControladorSQLJAVA
     }
 //Fin del programa controlador del interprete de algebra SQL/JAVA
 }
+
+
+
+
+        
+        
+        /*
+        String primary_key="";
+        int x = 0;
+        int largo = sqlQuery3.length();
+        String atribu0 = "";
+        String atribu = "proy1."+tabla1+".";
+        
+        for (x=0;x<largo;x++){
+            if(sqlQuery3.charAt(x) == ','){
+                atribu = atribu + primary_key; 
+                atribu0 = atribu0+atribu;
+                atribu0 = atribu0+", proy1."+tabla1+".";   
+                primary_key = "";
+                atribu = "";
+            }else{
+                if(sqlQuery3.charAt(index) == ' '){
+                    break;
+                }else{
+                    primary_key += sqlQuery3.charAt(x);      
+                }
+            }
+        }
+        return atribu0;
+         */
+
+
+
 
 /*
            while(output.next())    //Obtengo datos de la tabla input
