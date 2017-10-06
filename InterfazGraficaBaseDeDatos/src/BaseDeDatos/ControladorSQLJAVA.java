@@ -762,6 +762,7 @@ public class ControladorSQLJAVA
      */
     public int cargarTablaRenomR(String name_tablaInput, String name_atributos, String name_tablaOutput)
     {
+        
         return 0;
     }
     /**
@@ -776,7 +777,7 @@ public class ControladorSQLJAVA
         modelo.setRowCount(0);
         
         try{
-            output = Conexion.consultaSql("SELECT * FROM proy1."+name_tablaInput+", proy1."+name_tablaInput2, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
+            output = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput+" JOIN proy1."+name_tablaInput2+" ON "+predicado, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
             metaDatos = output.getMetaData();   //Obtengo el total de columnas que tiene la tabla
             index = metaDatos.getColumnCount();
                        
@@ -802,7 +803,7 @@ public class ControladorSQLJAVA
             //Datos a utilizar
             sqlQuery += name_tablaOutput + " " + sqlQuery2 + ")";                               //Create
             insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") "       //Insert
-                    +"SELECT * FROM proy1."+name_tablaInput+" INNER JOIN proy1."+name_tablaInput2+" WHERE "+predicado;              //Select
+                    +"SELECT * FROM proy1."+name_tablaInput+" JOIN proy1."+name_tablaInput2+" ON "+predicado;              //Select
             selectTemp = "SELECT * FROM proy1.#"+name_tablaOutput;
             
             System.out.println(sqlQuery + "\n" + sqlQuery2 + "\n" + sqlQuery3);
@@ -844,7 +845,7 @@ public class ControladorSQLJAVA
         modelo.setRowCount(0);
         
         try{
-            output = Conexion.consultaSql("SELECT * FROM proy1."+name_tablaInput+", proy1."+name_tablaInput2, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
+            output = Conexion.consultaSql("SELECT * FROM proy1."+name_tablaInput, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
             metaDatos = output.getMetaData();   //Obtengo el total de columnas que tiene la tabla
             index = metaDatos.getColumnCount();
                        
@@ -855,31 +856,27 @@ public class ControladorSQLJAVA
             
             int contadorAlmenosDos=0;
             String atri1,atri2;
-            if(index == index2)
+
+            //Deben almenos existir dos atributos con el mismo dominio......falta
+            //Crear dos string que van a tener los nombres de los atributos
+
+            for(int i=1; i<=index; i++)
             {
-                JOptionPane.showMessageDialog(null, "La aridad de estas dos tablas coinciden Y son de ARIDAD = "+index);
-                
-                for(int i=1; i<=index; i++)
-                {
-                    atri1 = metaDatos.getColumnName(i);
-                    atri2 = metaDatos2.getColumnName(i);
-                    if(atri1.equals(atri2) && contadorAlmenosDos < 2){
-                        JOptionPane.showMessageDialog(null, "¡¡¡Los dominios de los atributos son iguales!!!");
-                        contadorAlmenosDos++;
-                    }else{
-                        JOptionPane.showMessageDialog(null, "¡¡¡ERROR: DOMINIOS DIFERENTES. EL ATRIBUTO "+atri1+" TIENE DOMINIO "+atri1+" Y EL ATRIBUTO "+atri2+" TIENE DOMINIO "+atri2+"!!!");
-                        return 1;
-                    }
-                }
-                if(contadorAlmenosDos < 2){
+                atri1 = metaDatos.getColumnName(i);
+                atri2 = metaDatos2.getColumnName(i);
+                int isExists=getIfExists(atri1, metaDatos2);
+                if(isExists == 1 && contadorAlmenosDos < 2){
+                    JOptionPane.showMessageDialog(null, "¡¡¡Los dominios de los atributos son iguales!!!");
+                    contadorAlmenosDos++;
+                }else if(contadorAlmenosDos < 2){
                     JOptionPane.showMessageDialog(null, "¡¡¡ERROR: NO HAY ATRIBUTOS COMUNES!!!");
+                    return 1;
                 }
-            }else
-            {
-                JOptionPane.showMessageDialog(null, "¡¡¡ERROR: TABLAS CON DIFERENTE ARIDAD. LA TABLA 1 TIENE ARIDAD "+index+" Y LA TABLA 2 TIENE ARIDAD "+index2+"!!!");
-                return 1;
             }
-            
+            if(contadorAlmenosDos < 2){
+                JOptionPane.showMessageDialog(null, "¡¡¡ERROR: NO HAY ATRIBUTOS COMUNES!!!");
+            }
+           
             //Recorro la tabla y obtengo el nombre de las columnas
             for (int i = 1; i <= index; i++) {
               if (i == index){
@@ -934,6 +931,22 @@ public class ControladorSQLJAVA
         
         return 0;
     }
+    public int getIfExists(String atri1, ResultSetMetaData metaDatos)
+    {
+        try{
+            int index = metaDatos.getColumnCount();
+            for (int i = 1; i <= index; i++) {
+                String atri0 = metaDatos.getColumnName(i);
+                if(atri1.equals(atri0)){
+                    return 1;
+                }
+            }
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return 0;
+    }
     /**
      * agregacion
      */
@@ -974,7 +987,7 @@ public class ControladorSQLJAVA
             insertTemp = "INSERT INTO proy1.#"+name_TablaOutput + " (" + sqlQuery3+ ") " 
                     +"SELECT "+oper_agre+" FROM proy1."+name_TablaInput;               //Select
             selectTemp = "SELECT * FROM proy1.#"+name_TablaOutput;
-;         
+     
             System.out.println(sqlQuery + "\n" + sqlQuery2);
             System.out.println("\n" + insertTemp + "\n" + selectTemp);
             
@@ -1004,11 +1017,106 @@ public class ControladorSQLJAVA
         }
         return 0;
     }
+    public String getTypeAtri(ResultSetMetaData data, String name_atri)
+    {
+        try {
+            int largo = 0;
+
+            String result = "";
+            String[] atributos = name_atri.split(", ");
+            largo = atributos.length;
+            for (int i = 1; i <= largo; i++) {
+                if(i == largo){
+                     result += atributos[i-1]
+                            + " "
+                            + data.getColumnTypeName(i)
+                            + "(" + Integer.toString(data.getPrecision(i))
+                            + ")"; 
+                }else{
+                     result += atributos[i-1]
+                            + " "
+                            + data.getColumnTypeName(i)
+                            + "(" + Integer.toString(data.getPrecision(i))
+                            + "), ";   
+                }
+            }        
+            return result;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return "";
+    }
+
     /**
      * agrupacion
      */
     public int cargarTablaAgrupacion(String name_TablaInput, String name_atri, String oper_agre, String name_TablaOutput)
     {
+        restartQuerys();    //Obtengo esqueleto de datos a utilizar en los query
+        DefaultTableModel modelo = getRegister().getTablaModel();   //Obtengo la tabla de la Base de datos para poder agregarla
+        modelo.setRowCount(0);
+        
+        try{
+            output = Conexion.consultaSql("SELECT "+name_atri+", "+oper_agre+" FROM proy1."+name_TablaInput+" GROUP BY "+name_atri, name_TablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
+            metaDatos = output.getMetaData();   //Obtengo el total de columnas que tiene la tabla
+            index = metaDatos.getColumnCount();
+            
+            String sqlQuery22 = "";
+            //String sql00 = getTypeAtri(metaDatos, name_atri);
+            //Recorro la tabla y obtengo el nombre de las columnas
+            for (int i = 1; i <= index; i++) {
+              if (i == index){
+                sqlQuery3 += metaDatos.getColumnName(i);
+                sqlQuery22 += metaDatos.getColumnName(i) 
+                     + " "
+                     + metaDatos.getColumnTypeName(i)
+                     + "(" + Integer.toString(metaDatos.getPrecision(i))
+                     + ")";
+              }else{
+                sqlQuery3 += metaDatos.getColumnName(i)+ ", ";
+                sqlQuery22 += metaDatos.getColumnName(i) 
+                     + " "
+                     + metaDatos.getColumnTypeName(i)
+                     + "(" + Integer.toString(metaDatos.getPrecision(i))
+                     + ")"
+                     + ", ";
+              }
+            }
+           
+            //Datos a utilizar
+            sqlQuery += name_TablaOutput + " ("+ sqlQuery22 + ")";                                                      //Create
+            insertTemp = "INSERT INTO proy1.#"+name_TablaOutput + " (" + sqlQuery3 + ") " 
+                    +"SELECT "+name_atri+", "+oper_agre+" FROM proy1."+name_TablaInput
+                    +" GROUP BY "+name_atri;               //Select
+            selectTemp = "SELECT * FROM proy1.#"+name_TablaOutput;
+     
+            System.out.println(sqlQuery + "\n" + sqlQuery22);
+            System.out.println("\n" + insertTemp + "\n" + selectTemp);
+            
+            //-----Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
+            output = Conexion.consultaSqlCreate(sqlQuery, insertTemp, selectTemp, name_TablaInput);          //Lo accede el usuario usproy1
+            metaDatos = output.getMetaData();
+            index = metaDatos.getColumnCount();      
+            
+            while(output.next())
+            {
+                v = new Vector();
+                for(int i=1;i<=index;i++)
+                {
+                    //Extraigo tupla. Imprimo la tabla temporal
+                    v.add(output.getString(i));      
+                    //System.out.println("----"+output.getString(i)); 
+                }
+                modelo.addRow(v);
+            }
+            modelo.setColumnIdentifiers(putEtiq(index, metaDatos));     //Agego etiquetas a la tabla
+            getRegister().setTablaModel(modelo);    //Agrego datos a la tabla
+            setTemp(name_TablaOutput, cont);        //Aumento contador de nombre de la tabla temporal
+            this.cont++;
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
         return 0;
     }
     
@@ -1315,7 +1423,7 @@ public class ControladorSQLJAVA
         //Verifica si la informacion esta digitada
         if(getRegister().getInput1().isEmpty() || getRegister().getNombreA().isEmpty() || getRegister().getOutput().isEmpty())
         {
-            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, TABLA INPUT 2 y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, NOMBRE DE ATRIBUTOS y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
             getRegister().cleanText();
         } else {
             //Caso cuando no colocá el nombre de la TABLA OUTPUT
@@ -1341,7 +1449,7 @@ public class ControladorSQLJAVA
         //Verifica si la informacion esta digitada
         if(getRegister().getInput1().isEmpty() || getRegister().getInput2().isEmpty() || getRegister().getPredicado().isEmpty() || getRegister().getOutput().isEmpty())
         {
-            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, TABLA INPUT 2 y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, TABLA INPUT 2, PREDICADO y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
             getRegister().cleanText();
         } else {
             //Caso cuando no colocá el nombre de la TABLA OUTPUT
@@ -1395,7 +1503,7 @@ public class ControladorSQLJAVA
         //Verifica si la informacion esta digitada
         if(getRegister().getInput1().isEmpty() || getRegister().getOperAgre().isEmpty() || getRegister().getOutput().isEmpty())
         {
-            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, TABLA INPUT 2 y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, OPERACIONES DE AGREGACIONES y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
             getRegister().cleanText();
         } else {
             //Caso cuando no colocá el nombre de la TABLA OUTPUT
@@ -1421,19 +1529,19 @@ public class ControladorSQLJAVA
         //Verifica si la informacion esta digitada
         if(getRegister().getInput1().isEmpty() || getRegister().getNombreA().isEmpty() || getRegister().getOperAgre().isEmpty() || getRegister().getOutput().isEmpty())
         {
-            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, TABLA INPUT 2 y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "¡¡¡Inserte la TABLA INPUT 1, NOMBRE ATRIBUTOS, OPERACIONES DE AGREGACION y la TABLA OUTPUT correctamente!!!","Information",JOptionPane.INFORMATION_MESSAGE);
             getRegister().cleanText();
         } else {
             //Caso cuando no colocá el nombre de la TABLA OUTPUT
             if(getRegister().getOutput().isEmpty()){
-                getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getNombreA()+")");
-                getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                getRegister().setAlgebraR(getRegister().getOutput()+" <- "+getRegister().getNombreA()+" Ģ "+getRegister().getOperAgre()+" ("+getRegister().getInput1()+")");
+                getRegister().setSql("SELECT "+getRegister().getNombreA()+", "+getRegister().getOperAgre()+" FROM "+getRegister().getInput1());
                 JOptionPane.showMessageDialog(null, "No ingreso el nombre de la tabla resultante:\nNo se muestra la tabla graficamente\nNi se crea la tabla temporal");
             //Caso en que si digita toda la informacion
             }else{
                 if(!isExistsTableOut(getRegister().getOutput())){
-                    getRegister().setAlgebraR(getRegister().getOutput()+" <- π * ("+getRegister().getInput1()+") ÷ π * ("+getRegister().getInput2()+")");
-                    getRegister().setSql("SELECT * FROM "+getRegister().getInput1()+" EXCEPT SELECT * FROM "+getRegister().getInput2());
+                    getRegister().setAlgebraR(getRegister().getOutput()+" <- "+getRegister().getNombreA()+" Ģ "+getRegister().getOperAgre()+" ("+getRegister().getInput1()+")");
+                    getRegister().setSql("SELECT "+getRegister().getNombreA()+", "+getRegister().getOperAgre()+" FROM "+getRegister().getInput1());
                     cargarTablaAgrupacion(getRegister().getInput1(), getRegister().getNombreA(), getRegister().getOperAgre(), getRegister().getOutput());
                 }
             }
