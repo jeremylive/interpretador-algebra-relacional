@@ -401,4 +401,8 @@ public class DbaInterfaz extends javax.swing.JFrame
     private javax.swing.JLabel jLabel1;
     private javax.swing.JComboBox<String> operacion;
     // End of variables declaration//GEN-END:variables
+
+    void setLocationRelativeTo(int i) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
