@@ -836,9 +836,13 @@ public class ControladorSQLJAVA
                 String atri = rTabla.getColumnName(i);
 
                 if(atriConcatena2.contains(atri)){
-                    result += atri;
                     atriConcatena3.add(atri);
                     setLargo();
+                    if(index==i || i== 1){
+                        result += atri;
+                    }else{
+                        result += atri + ", ";
+                    }
                 }
                 
             }
@@ -922,7 +926,7 @@ public class ControladorSQLJAVA
             System.out.println(all_atri + "\n" + largo_columnas + "\n" + all_atri_tabla2);
             
             String atributos99 = convertToAtri(all_atri_tabla2, name_tablaInput, largo_columnas);
-            
+            atriConcatena3.clear();
             sqlQuery2 = getTypeAtri(metaDatos, all_atri_tabla2);
             //Datos a utilizar
             sqlQuery += name_tablaOutput + " (" + sqlQuery2+")";                               //Create
@@ -954,6 +958,8 @@ public class ControladorSQLJAVA
             setTemp(name_tablaOutput, cont);        //Aumento contador de nombre de la tabla temporal
             this.cont++;
             atriConcatena1.clear();
+            atriConcatena2.clear();
+            atriConcatena3.clear();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } catch (NullPointerException x) {
@@ -1003,32 +1009,38 @@ public class ControladorSQLJAVA
                 JOptionPane.showMessageDialog(null, "¡¡¡ERROR: NO HAY ATRIBUTOS COMUNES!!!");
             }
            
+            
+            output = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput+", proy1."+name_tablaInput2, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
+            metaDatos = output.getMetaData();   //Obtengo el total de columnas que tiene la tabla
+            index = metaDatos.getColumnCount();
+                       
             //Recorro la tabla y obtengo el nombre de las columnas
             for (int i = 1; i <= index; i++) {
-              if (i == index){
-                sqlQuery3 += metaDatos.getColumnName(i);
-                sqlQuery2 += metaDatos.getColumnName(i) 
-                     + " "
-                     + metaDatos.getColumnTypeName(i)
-                     + "(" + Integer.toString(metaDatos.getPrecision(i))
-                     + ")";
-              }else{
-                sqlQuery3 += metaDatos.getColumnName(i)+ ", ";
-                sqlQuery2 += metaDatos.getColumnName(i) 
-                     + " "
-                     + metaDatos.getColumnTypeName(i)
-                     + "(" + Integer.toString(metaDatos.getPrecision(i))
-                     + ")"
-                     + ", ";    
-              }
+                setAtriConca(metaDatos.getColumnName(i));
             }
+            //Inserto datos bien...
+            output = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput2, name_tablaInput2);   //Hago la selecion de la tabla, 1*validacion(si existe table)
+            ResultSetMetaData metaDatos99 = output.getMetaData();
+            output2 = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
+            ResultSetMetaData metaDatos992 = output2.getMetaData();
+            
+            String all_atri = "";
+            all_atri = getAllAtri();
+            String all_atri_tabla2 = getAllTable(metaDatos992, metaDatos99);
+            int largo_columnas = atriConcatena3.size();
+            atriConcatena3.clear();
+            System.out.println(all_atri + "\n" + largo_columnas + "\n" + all_atri_tabla2);
+            
+            String atributos99 = convertToAtri(all_atri_tabla2, name_tablaInput, largo_columnas);
+            
+            sqlQuery2 = getTypeAtri(metaDatos, all_atri_tabla2);
             //Datos a utilizar
-            sqlQuery += name_tablaOutput + " " + sqlQuery2 + ")";                               //Create
-            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") "       //Insert
+            sqlQuery += name_tablaOutput + " (" + sqlQuery2+")";                               //Create
+            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" +all_atri_tabla2+ ") "       //Insert
                     +"SELECT * FROM proy1."+name_tablaInput+" NATURAL JOIN proy1."+name_tablaInput2;              //Select
             selectTemp = "SELECT * FROM proy1.#"+name_tablaOutput;
             
-            System.out.println(sqlQuery + "\n" + sqlQuery2 + "\n" + sqlQuery3);
+            System.out.println(sqlQuery + "\n" + sqlQuery2 );
             System.out.println("\n" + insertTemp + "\n" + selectTemp);
             
             //-----Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
@@ -1051,8 +1063,13 @@ public class ControladorSQLJAVA
             getRegister().setTablaModel(modelo);    //Agrego datos a la tabla
             setTemp(name_tablaOutput, cont);        //Aumento contador de nombre de la tabla temporal
             this.cont++;
+            atriConcatena1.clear();
+            atriConcatena2.clear();
+            
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (NullPointerException x) {
+            System.out.println(x.getMessage());
         }
         
         return 0;
