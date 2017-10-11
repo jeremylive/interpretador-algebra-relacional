@@ -771,20 +771,116 @@ public class ControladorSQLJAVA
      */
     public int cargarTablaRenomR(String name_tablaInput, String name_atributos, String name_tablaOutput)
     {
+        restartQuerys();    //Obtengo esqueleto de datos a utilizar en los query
+        DefaultTableModel modelo = getRegister().getTablaModel();   //Obtengo la tabla de la Base de datos para poder agregarla
+        modelo.setRowCount(0);
         
+        try{
+            output = Conexion.consultaSql("SELECT * FROM proy1."+name_tablaInput, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
+            metaDatos = output.getMetaData();   //Obtengo el total de columnas que tiene la tabla
+            index = metaDatos.getColumnCount();
+            
+            //Recorro la tabla y obtengo el nombre de las columnas
+            for (int i = 1; i <= index; i++) {
+              if (i == index){
+                sqlQuery3 += metaDatos.getColumnName(i); 
+                sqlQuery2 += metaDatos.getColumnName(i) 
+                     + " "
+                     + metaDatos.getColumnTypeName(i)
+                     + "(" + Integer.toString(metaDatos.getPrecision(i))
+                     + ")";
+              }else{
+                sqlQuery3 += metaDatos.getColumnName(i) + ", ";
+                sqlQuery2 += metaDatos.getColumnName(i) 
+                     + " "
+                     + metaDatos.getColumnTypeName(i)
+                     + "(" + Integer.toString(metaDatos.getPrecision(i))
+                     + ")"
+                     + ", ";
+              }
+            }
+           
+            //Datos a utilizar
+            sqlQuery += name_tablaOutput + " "+ sqlQuery2 + ")";                                                      //Create
+            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" + sqlQuery3 + ") " 
+                    +"SELECT * FROM proy1."+name_tablaInput;               //Select
+            selectTemp = "SELECT * FROM proy1.#"+name_tablaOutput;
+         
+            System.out.println(sqlQuery + "\n" + sqlQuery2);
+            System.out.println("\n" + insertTemp + "\n" + selectTemp);
+            
+            //Creo nombre de atributos de la nueva tabla
+            String[] nuevos_atri = {};
+            Object[] nuevos_atriN222 = nuevos_atri;
+            Object[] nuevos_atriN = new Object[index];
+            int largoAtriN = 0;
+            boolean status = false;
+            //obtengo nombrees de los nuevos atrbutos
+            if(index == 1){
+                status = true;
+            }else{
+                nuevos_atri = name_atributos.split(", ");
+            }
+            largoAtriN = nuevos_atri.length;
+            System.out.println("\nlargoNUEVOSATRI "+largoAtriN);
+            
+            if(largoAtriN == index){
+                JOptionPane.showMessageDialog(null, "Felicidades: los atributos tienen la misma aridad");
+                
+                //Los agrego al arraylist
+                if(status == true){
+                    nuevos_atriN[0] = name_atributos;
+                }else{
+                    //entra si tienen misma aridad
+                    for (int i = 0; i < index; i++) {
+                        nuevos_atriN[i] = nuevos_atri[i];
+                    }
+                }
+                
+            }else{
+                JOptionPane.showMessageDialog(null, "Error: atributos con distinta aridad");
+            }
+
+            //-----Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
+            output = Conexion.consultaSqlCreate(sqlQuery, insertTemp, selectTemp, name_tablaInput);          //Lo accede el usuario usproy1
+            metaDatos = output.getMetaData();
+            index = metaDatos.getColumnCount();      
+            
+            while(output.next())
+            {
+                v = new Vector();
+                for(int i=1;i<=index;i++)
+                {
+                    //Extraigo tupla. Imprimo la tabla temporal
+                    v.add(output.getString(i));      
+                    //System.out.println("----"+output.getString(i)); 
+                }
+                modelo.addRow(v);
+            }
+            
+            
+            modelo.setColumnIdentifiers(nuevos_atriN);     //Agego etiquetas a la tabla
+            
+            
+            getRegister().setTablaModel(modelo);    //Agrego datos a la tabla
+            setTemp(name_tablaOutput, cont);        //Aumento contador de nombre de la tabla temporal
+            this.cont++;
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
         return 0;
     }
     //
-    public String getAllAtri()
+    public String getAllAtri(ArrayList<String> atriCo)
     {
         String result = "";
-        int largo = atriConcatena1.size();
-        System.out.println("---------"+largo);
+        int largo = atriCo.size();
         for (int i = 1; i <= largo; i++) {
                 if(i == largo){
-                     result += atriConcatena1.get(i-1);
+                     result += atriCo.get(i-1);
                 }else{
-                     result += atriConcatena1.get(i-1)
+                     result += atriCo.get(i-1)
                             + ", ";   
                 }
         }     
@@ -796,15 +892,13 @@ public class ControladorSQLJAVA
     {
         int largo = 0;
         int status = 0;
-        largo = atriConcatena1.size();
         ArrayList<String> atri2 = atriConcatena1;
-        System.out.println("..."+largo);
-        
+        largo = atriConcatena1.size();
+
         if(largo == 0){
             atriConcatena1.add(atributo);
         }else{
             for (int i = 0; i < largo; i++) {
-                System.out.println("\n"+atri2.get(i) +"=="+ atributo+"\n");
                 if(atri2.get(i).equals(atributo)){
                     status = 1;
                 }
@@ -816,75 +910,50 @@ public class ControladorSQLJAVA
 
     }
     //
-    public String getAllTable(ResultSetMetaData rTabla0, ResultSetMetaData rTabla)
+    public void getAllTable(ResultSetMetaData rTabla0, ResultSetMetaData rTabla)
     {
         try{
             String atri_comparo = "";
             String tabla0 = "";
             String result = "";
+            boolean boleano = false;
             index = rTabla.getColumnCount();
             int index0 = rTabla0.getColumnCount();
-            boolean status = false;
             System.out.println("index0 y 1"+index0+" "+index);
             for (int i = 1; i <= index0; i++) {
-                String atri0 = rTabla0.getColumnName(i);
+               String atri0 = rTabla0.getColumnName(i);
                atriConcatena2.add(atri0);
-                             
             }
             //Recorro la tabla y obtengo el nombre de las columnas TABLA2
             for (int i = 1; i <= index; i++) {
                 String atri = rTabla.getColumnName(i);
-
-                if(atriConcatena2.contains(atri)){
+                if(atriConcatena2.contains(atri)){      //comparo atri1 con atri2
                     atriConcatena3.add(atri);
-                    setLargo();
-                    if(index==i || i== 1){
-                        result += atri;
-                    }else{
+                    //setLargo();
+                    if(index==i){
+                        result += atri;                  
+                    }else {
                         result += atri + ", ";
                     }
                 }
-                
             }
-            
-            
-            
-            /*
-            //Comparo y retorno
-            for (int x=0;x<rTotal.length();x++){
-                if(rTotal.charAt(x) == ','){
-                    if(atri_comparo.equals(rTotal.charAt(x))){
-                        
-                    }
-                    atri_comparo = "";
-                    
-                }else if(rTotal.charAt(x) == ' '){
-                    continue;
-                }else{
-                    atri_comparo += sqlQuery3.charAt(x);
-                }
-            }
-            */
-            System.out.println(".-.-.-"+ result);
-            return result;
+            //return result;    
             
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
-        
-        return "";
+        //return "";
     }
     //
-    public String getAtri3()
+    public String getAtri2()
     {
         String result = "";
-        int largo = atriConcatena3.size();
-        for (int i = 0; i <= largo; i++) { 
+        int largo = atriConcatena2.size();
+        for (int i = 0; i < largo; i++) { 
             if(i == largo-1){
-                result += atriConcatena3.get(i);
+                result += atriConcatena2.get(i);
             }else{
-                result += atriConcatena3.get(i)+", ";
+                result += atriConcatena2.get(i)+", ";
             }
                          
         }
@@ -894,49 +963,83 @@ public class ControladorSQLJAVA
         
         return result;
     }
+    //
+    public void comparaString(){
+        int largo1 = atriConcatena1.size();
+        int largo2 = atriConcatena3.size();
+        atriConcatena2.clear();
+        boolean status = false;
+        //String result ="";
+        //System.out.println("largo1: "+largo1+"  largo2: "+largo2);
+        for (int i = 0; i < largo1; i++) {
+            for (int j = 0; j < largo2; j++) {
+                //System.out.println(atriConcatena1.get(i) + "\n- " +  atriConcatena3.get(j));
+                if(atriConcatena1.get(i).equals(atriConcatena3.get(j))){
+                    status = true;
+                    //result += atriConcatena1.get(i);
+                }
+            }
+            //
+            if(status == true){
+                atriConcatena2.add(atriConcatena1.get(i));
+                status = false;
+            }
+        }
+        //return result;
+    }
     /**
      * concatenacion join
      */
     public void cargarTablaConcaJoin(String name_tablaInput, String name_tablaInput2, String predicado, String name_tablaOutput)
     {
+        String all_atri = "";
+        String atributos99="";
+        String all_atri_tabla2 = "";
+        int largo_columnas = 0;
         restartQuerys();    //Obtengo esqueleto de datos a utilizar en los query
         DefaultTableModel modelo = getRegister().getTablaModel();   //Obtengo la tabla de la Base de datos para poder agregarla
         modelo.setRowCount(0);
-        
         try{
+            //Recorro la tabla y obtengo el nombre de las columnas
             output = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput+", proy1."+name_tablaInput2+" WHERE "+predicado, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
             metaDatos = output.getMetaData();   //Obtengo el total de columnas que tiene la tabla
             index = metaDatos.getColumnCount();
-                       
-            //Recorro la tabla y obtengo el nombre de las columnas
             for (int i = 1; i <= index; i++) {
                 setAtriConca(metaDatos.getColumnName(i));
             }
             //Inserto datos bien...
             output = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput2, name_tablaInput2);   //Hago la selecion de la tabla, 1*validacion(si existe table)
+            ResultSet output2 = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)         
             ResultSetMetaData metaDatos99 = output.getMetaData();
-            ResultSet output2 = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
             ResultSetMetaData metaDatos992 = output2.getMetaData();
-            
-            String all_atri = "";
-            all_atri = getAllAtri();
-            String all_atri_tabla2 = getAllTable(metaDatos992, metaDatos99);
-            int largo_columnas = atriConcatena3.size();
-            
-            System.out.println(all_atri + "\n" + largo_columnas + "\n" + all_atri_tabla2);
-            
-            String atributos99 = convertToAtri(all_atri_tabla2, name_tablaInput, largo_columnas);
-            atriConcatena3.clear();
-            sqlQuery2 = getTypeAtri(metaDatos, all_atri_tabla2);
+            //Obtengo todos los atributos del nuevo JOIN
+            //all_atri = getAllAtri();
+            //obtengo atributos que estan en las dos tablas a hacer JOIN
+            getAllTable(metaDatos992, metaDatos99);
+            String prueba=getAtri2();
+            System.out.println("\n tabla 1: "+prueba);
+            //          
+            String comparo="";
+            comparaString();
+            comparo = getAtri2();
+            //Largo del all_Atri_tabla2
+            largo_columnas = atriConcatena2.size();
+            System.out.println("\n.."+comparo+"\n largo.."+largo_columnas);
+            //Convierto el string a la syntaxis de SQL
+            atributos99 = convertToAtri(comparo, name_tablaInput, largo_columnas);          
+            //Obtengo tipos de los atributos para que calse con SQL
+            sqlQuery2 = getTypeAtri(metaDatos, comparo);
             //Datos a utilizar
             sqlQuery += name_tablaOutput + " (" + sqlQuery2+")";                               //Create
-            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" +all_atri_tabla2+ ") "       //Insert
+            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" +comparo+ ") "       //Insert
                     +"SELECT "+atributos99+" FROM proy1."+name_tablaInput+" JOIN proy1."+name_tablaInput2+" ON "+predicado;              //Select
             selectTemp = "SELECT * FROM proy1.#"+name_tablaOutput;
+           
             
-            System.out.println(sqlQuery + "\n" + sqlQuery2 );
-            System.out.println("\n" + insertTemp + "\n" + selectTemp);
-            
+            System.out.println("\n comparo: "+comparo + "\n largo_colum: " + largo_columnas);            
+            System.out.println("\n sqlQuery: "+sqlQuery + "\n sqlQuery2: " + sqlQuery2 );
+            System.out.println("\n insertTemp: " + insertTemp + "\n selectTemp: " + selectTemp);
+           
             //-----Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
             output = Conexion.consultaSqlCreate(sqlQuery, insertTemp, selectTemp, name_tablaInput);          //Lo accede el usuario usproy1
             metaDatos = output.getMetaData();
@@ -972,6 +1075,120 @@ public class ControladorSQLJAVA
      */
     public int cargarTablaNaturalJoin(String name_tablaInput, String name_tablaInput2, String name_tablaOutput)
     {
+        String all_atri = "";
+        String atributos99="";
+        String all_atri_tabla2 = "";
+        int largo_columnas = 0;
+        restartQuerys();    //Obtengo esqueleto de datos a utilizar en los query
+        DefaultTableModel modelo = getRegister().getTablaModel();   //Obtengo la tabla de la Base de datos para poder agregarla
+        modelo.setRowCount(0);
+        try{
+            //Recorro la tabla y obtengo el nombre de las columnas
+            output = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput+", proy1."+name_tablaInput2, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)
+            metaDatos = output.getMetaData();   //Obtengo el total de columnas que tiene la tabla
+            index = metaDatos.getColumnCount();
+            for (int i = 1; i <= index; i++) {
+                setAtriConca(metaDatos.getColumnName(i));
+            }
+            //Inserto datos bien...
+            output = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput2, name_tablaInput2);   //Hago la selecion de la tabla, 1*validacion(si existe table)
+            ResultSet output2 = Conexion.consultaSql("SELECT *  FROM proy1."+name_tablaInput, name_tablaInput);   //Hago la selecion de la tabla, 1*validacion(si existe table)         
+            ResultSetMetaData metaDatos99 = output.getMetaData();
+            ResultSetMetaData metaDatos992 = output2.getMetaData();
+            
+            String atri1,atri2;
+            int index2 = 0;
+            int contadorAlmenosDos=0;
+            index = metaDatos992.getColumnCount();
+            index2 = metaDatos99.getColumnCount();            
+            
+            for(int i=1; i<=index; i++)
+            {
+                atri1 = metaDatos992.getColumnName(i);
+                atri2 = metaDatos99.getColumnName(i);
+                int isExists=getIfExists(atri1, metaDatos99);
+                if(isExists == 1 && contadorAlmenosDos < 2){
+                    JOptionPane.showMessageDialog(null, "¡¡¡Los dominios de los atributos son iguales!!!");
+                    contadorAlmenosDos++;
+                }else if(contadorAlmenosDos < 2){
+                    JOptionPane.showMessageDialog(null, "¡¡¡ERROR: NO HAY ATRIBUTOS COMUNES!!!");
+                    return 1;
+                }
+            }
+            if(contadorAlmenosDos < 2){
+                JOptionPane.showMessageDialog(null, "¡¡¡ERROR: NO HAY ATRIBUTOS COMUNES!!!");
+                return 1;
+            }
+           
+            //Obtengo todos los atributos del nuevo JOIN
+            //all_atri = getAllAtri();
+            //obtengo atributos que estan en las dos tablas a hacer JOIN
+            getAllTable(metaDatos992, metaDatos99);
+            String prueba=getAtri2();
+            System.out.println("\n tabla 1: "+prueba);
+            //          
+            String comparo="";
+            comparaString();
+            comparo = getAtri2();
+            //Largo del all_Atri_tabla2
+            largo_columnas = atriConcatena2.size();
+            System.out.println("\n.."+comparo+"\n largo.."+largo_columnas);
+            //Convierto el string a la syntaxis de SQL
+            atributos99 = convertToAtri(comparo, name_tablaInput, largo_columnas);   
+            //Obtengo predicado
+            String foreKey = "";
+            String[] key = {};
+            if(largo_columnas == 1){
+                foreKey = comparo;
+            }else{
+                key = comparo.split(", ");               
+            }
+            String predicado  = "proy1."+name_tablaInput+"."+key[0]+" = "+"proy1."+name_tablaInput2+"."+key[0];
+            System.out.println("\n predicado"+predicado+"\n");
+            //Obtengo tipos de los atributos para que calse con SQL
+            sqlQuery2 = getTypeAtri(metaDatos, comparo);
+            //Datos a utilizar
+            sqlQuery += name_tablaOutput + " (" + sqlQuery2+")";                               //Create
+            insertTemp = "INSERT INTO proy1.#"+name_tablaOutput + " (" +comparo+ ") "       //Insert
+                    +"SELECT "+atributos99+" FROM proy1."+name_tablaInput+" JOIN proy1."+name_tablaInput2+" ON "+predicado;              //Select
+            selectTemp = "SELECT * FROM proy1.#"+name_tablaOutput;
+           
+            System.out.println("\n comparo: "+comparo + "\n largo_colum: " + largo_columnas);            
+            System.out.println("\n sqlQuery: "+sqlQuery + "\n sqlQuery2: " + sqlQuery2 );
+            System.out.println("\n insertTemp: " + insertTemp + "\n selectTemp: " + selectTemp);
+           
+            //-----Creo la tabla temporal eh Inserto datos en la tabla temporal y accedo a ella
+            output = Conexion.consultaSqlCreate(sqlQuery, insertTemp, selectTemp, name_tablaInput);          //Lo accede el usuario usproy1
+            metaDatos = output.getMetaData();
+            index = metaDatos.getColumnCount();      
+            
+            while(output.next())
+            {
+                v = new Vector();
+                for(int i=1;i<=index;i++)
+                {
+                    //Extraigo tupla. Imprimo la tabla temporal
+                    v.add(output.getString(i));      
+                    //System.out.println("----"+output.getString(i)); 
+                }
+                modelo.addRow(v);
+            }
+            modelo.setColumnIdentifiers(putEtiq(index, metaDatos));     //Agego etiquetas a la tabla
+            getRegister().setTablaModel(modelo);    //Agrego datos a la tabla
+            setTemp(name_tablaOutput, cont);        //Aumento contador de nombre de la tabla temporal
+            this.cont++;
+            atriConcatena1.clear();
+            atriConcatena2.clear();
+            atriConcatena3.clear();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        } catch (NullPointerException x) {
+            System.out.println(x.getMessage());
+        }
+
+
+
+/*
         restartQuerys();    //Obtengo esqueleto de datos a utilizar en los query
         DefaultTableModel modelo = getRegister().getTablaModel();   //Obtengo la tabla de la Base de datos para poder agregarla
         modelo.setRowCount(0);
@@ -983,15 +1200,11 @@ public class ControladorSQLJAVA
                        
             ResultSet output2 = Conexion.consultaSql("SELECT * FROM proy1."+name_tablaInput2, name_tablaInput2);
             ResultSetMetaData metaDatos2 = output2.getMetaData();
-            int index2 = 0;
-            index2 = metaDatos2.getColumnCount();
             
+            int index2 = 0;
+            index2 = metaDatos2.getColumnCount();            
             int contadorAlmenosDos=0;
             String atri1,atri2;
-
-            //Deben almenos existir dos atributos con el mismo dominio......falta
-            //Crear dos string que van a tener los nombres de los atributos
-
             for(int i=1; i<=index; i++)
             {
                 atri1 = metaDatos.getColumnName(i);
@@ -1007,6 +1220,7 @@ public class ControladorSQLJAVA
             }
             if(contadorAlmenosDos < 2){
                 JOptionPane.showMessageDialog(null, "¡¡¡ERROR: NO HAY ATRIBUTOS COMUNES!!!");
+                return 1;
             }
            
             
@@ -1030,6 +1244,7 @@ public class ControladorSQLJAVA
             int largo_columnas = atriConcatena3.size();
             atriConcatena3.clear();
             System.out.println(all_atri + "\n" + largo_columnas + "\n" + all_atri_tabla2);
+
             
             String atributos99 = convertToAtri(all_atri_tabla2, name_tablaInput, largo_columnas);
             
@@ -1071,7 +1286,7 @@ public class ControladorSQLJAVA
         } catch (NullPointerException x) {
             System.out.println(x.getMessage());
         }
-        
+        */
         return 0;
     }
     public int getIfExists(String atri1, ResultSetMetaData metaDatos)
@@ -1274,6 +1489,7 @@ public class ControladorSQLJAVA
     {
         String result = "";
         String[] atributos = atris.split(", ");
+        
         for (int i = 1; i <= largo; i++) {
           if(i == largo){
                result += "proy1."+tabla1+"."+atributos[i-1];
@@ -1761,6 +1977,27 @@ public class ControladorSQLJAVA
 //Fin del programa controlador del interprete de algebra SQL/JAVA
 }
 
+
+
+
+
+
+            /*
+            //Comparo y retorno
+            for (int x=0;x<rTotal.length();x++){
+                if(rTotal.charAt(x) == ','){
+                    if(atri_comparo.equals(rTotal.charAt(x))){
+                        
+                    }
+                    atri_comparo = "";
+                    
+                }else if(rTotal.charAt(x) == ' '){
+                    continue;
+                }else{
+                    atri_comparo += sqlQuery3.charAt(x);
+                }
+            }
+            */
 
 
 
