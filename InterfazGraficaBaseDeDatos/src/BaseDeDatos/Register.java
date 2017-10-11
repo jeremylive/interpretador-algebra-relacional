@@ -395,6 +395,11 @@ public class Register extends javax.swing.JFrame
         jButton4.setFont(new java.awt.Font("Yu Gothic", 1, 24)); // NOI18N
         jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("Ver referencia cruzada / tablas");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         expree.setFont(new java.awt.Font("Tempus Sans ITC", 1, 14)); // NOI18N
         expree.setForeground(new java.awt.Color(255, 255, 255));
@@ -523,8 +528,7 @@ public class Register extends javax.swing.JFrame
                             .addComponent(nombre_atributos)))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(OperAgre)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(OperAgre))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -840,6 +844,10 @@ public class Register extends javax.swing.JFrame
     private void expresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_expresActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_expresActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4ActionPerformed
    
     /**
      * -------------------------------------------------------------------------
